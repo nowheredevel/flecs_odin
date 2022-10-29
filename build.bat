@@ -1,5 +1,9 @@
 cd flecs
+git pull origin master
 cmake .
 msbuild flecs.sln
 cd ..
-cp flecs/Debug/flecs_static.lib lib/
+REM Debug builds
+cp flecs/Debug/flecs.dll lib/debug/
+
+REM Release builds (TODO)
