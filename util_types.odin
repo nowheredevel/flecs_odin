@@ -8,3 +8,5 @@ flags32_t :: c.uint32_t
 flags64_t :: c.uint64_t
 
 size_t :: c.int32_t
+
+map_key_t :: c.uint64_t
