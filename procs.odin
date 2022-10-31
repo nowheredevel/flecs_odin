@@ -105,3 +105,14 @@ foreign flecs
     // Copy map.
     map_copy :: proc(map_t: ^Map) -> ^Map ---
 }
+
+@(default_calling_convention = "c", link_prefix = "flecs_")
+foreign flecs
+{
+    allocator_init :: proc(a: ^Allocator) ---
+    allocator_fini :: proc(a: ^Allocator) ---
+    allocator_get :: proc(a: ^Allocator, size: size_t) -> ^BlockAllocator ---
+    strdup :: proc(a: ^Allocator, str: cstring) -> ^c.char ---
+    strfree :: proc(a: ^Allocator, str: cstring) ---
+    dup :: proc(a: ^Allocator, size: size_t, src: rawptr) -> rawptr ---
+}
