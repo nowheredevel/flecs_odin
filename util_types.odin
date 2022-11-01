@@ -10,3 +10,4 @@ flags64_t :: c.uint64_t
 size_t :: c.int32_t
 
 map_key_t :: c.uint64_t
+va_list :: cstring

@@ -4,6 +4,6 @@ cmake .
 msbuild flecs.sln
 cd ..
 REM Debug builds
-cp flecs/Debug/flecs.dll lib/debug/
+cp flecs/Debug/flecs.dll .
 
 REM Release builds (TODO)

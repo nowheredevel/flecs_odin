@@ -2,12 +2,9 @@ package flecs
 
 import "core:c"
 
-when ODIN_OS == .Windows && ODIN_DEBUG
+when ODIN_OS == .Windows
 {
-    foreign import flecs "lib/debug/flecs.dll"
-} else when ODIN_OS == .Windows && !ODIN_DEBUG
-{
-    foreign import flecs "lib/release/flecs.dll"
+    foreign import flecs "flecs.dll"
 }
 
 @(default_calling_convention = "c", link_prefix = "_ecs", private)
@@ -61,6 +58,7 @@ foreign flecs
 {
     // Vector
 
+
     // Free vector
     vector_free :: proc(vector: ^Vector) ---
     // Clear values in vector
@@ -76,10 +74,12 @@ foreign flecs
 
     // Sparse
 
+
     sparse_last_id :: proc(sparse: ^Sparse) -> c.uint64_t ---
     sparse_count :: proc(sparse: ^Sparse) -> c.int32_t ---
 
     // Map
+
 
     map_params_fini :: proc(params: ^MapParams) ---
     map_fini :: proc(map_t: ^Map) ---
@@ -104,6 +104,81 @@ foreign flecs
     map_set_size :: proc(map_t: ^Map, elem_count: c.int32_t) ---
     // Copy map.
     map_copy :: proc(map_t: ^Map) -> ^Map ---
+
+    // StrBuf
+
+
+    // Append format string to a buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_append :: proc(buffer: ^StrBuf, fmt: cstring) -> bool ---
+
+    // Append format string with argument list to a buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_vappend :: proc(buffer: ^StrBuf, fmt: cstring, args: va_list) -> bool ---
+
+    // Append string to buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendstr :: proc(buffer: ^StrBuf, str: cstring) -> bool ---
+
+    // Append character to buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendch :: proc(buffer: ^StrBuf, ch: c.char) -> bool ---
+
+    // Append int to buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendint :: proc(buffer: ^StrBuf, v: c.int64_t) -> bool ---
+
+    // Append float to buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendflt :: proc(buffer: ^StrBuf, v: c.double, nan_delim: c.char) -> bool ---
+
+    // Append source buffer to destination buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_mergebuff :: proc(dst_buffer: ^StrBuf, src_buffer: ^StrBuf) -> bool ---
+
+    // Append string to buffer, transfer ownership to buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendstr_zerocpy :: proc(buffer: ^StrBuf, str: cstring) -> bool ---
+
+    // Append string to buffer, do not free/modify string.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendstr_zerocpy_const :: proc(buffer: ^StrBuf, str: cstring) -> bool ---
+
+    // Append n characters to buffer.
+    // Returns false when max is reached, true when there is still space
+    strbuf_appendstrn :: proc(buffer: ^StrBuf, str: cstring, n: c.int32_t) -> bool ---
+
+    // Return result string
+    strbuf_get :: proc(buffer: ^StrBuf) -> cstring ---
+
+    // Return small string from first element (appends \0)
+    strbuf_get_small :: proc(buffer: ^StrBuf) -> cstring ---
+
+    // Reset buffer without returning a string
+    strbuf_reset :: proc(buffer: ^StrBuf) ---
+
+    // Push a list
+    strbuf_list_push :: proc(buffer: ^StrBuf, list_open: cstring, separator: cstring) ---
+
+    // Pop a new list
+    strbuf_list_pop :: proc(buffer: ^StrBuf, list_close: cstring) ---
+
+    // Insert a new element in list
+    strbuf_list_next :: proc(buffer: ^StrBuf) ---
+
+    // Append character to as new element in list
+    strbuf_list_appendch :: proc(buffer: ^StrBuf, ch: c.char) -> bool ---
+
+    // Append formatted string as new element in list
+    strbuf_list_append :: proc(buffer: ^StrBuf, fmt: cstring, args: ..any) -> bool ---
+
+    // Append string as new element in list
+    strbuf_list_appendstr :: proc(buffer: ^StrBuf, str: cstring) -> bool ---
+
+    // Append string as new element in list
+    strbuf_list_appendstrn :: proc(buffer: ^StrBuf, str: cstring, n: c.int32_t) -> bool ---
+
+    strbuf_written :: proc(buffer: ^StrBuf) -> c.int32_t ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")
