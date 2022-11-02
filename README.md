@@ -1,20 +1,8 @@
 # flecs-odin
  A complete binding of flecs to the Odin programming language
 
-## Requirements
-CMake
-- Windows: MSVC
-- Linux: GCC or Clang
-
-## Building
-#### Windows
-Run build.bat from a Visual Studio Developer Terminal
-
-#### Linux
-Run build.sh
-
-#### Other
-Build flecs and put the dynamic library in /lib
+## Usage
+Bindings should work on all platforms, just place the dynamic library for flecs in the root of your project (or wherever the executable is run) and the bindings will work immediately.
 
 ## Style Guide
 - Functions use snake_case

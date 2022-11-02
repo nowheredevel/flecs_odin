@@ -179,6 +179,15 @@ foreign flecs
     strbuf_list_appendstrn :: proc(buffer: ^StrBuf, str: cstring, n: c.int32_t) -> bool ---
 
     strbuf_written :: proc(buffer: ^StrBuf) -> c.int32_t ---
+
+    // OSApi
+    
+
+    os_init :: proc() ---
+    os_fini :: proc() ---
+    os_set_api :: proc(os_api: ^OSApi) ---
+    os_get_api :: proc() -> OSApi ---
+    os_set_api_defaults :: proc() ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")

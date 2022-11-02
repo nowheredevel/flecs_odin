@@ -13,7 +13,7 @@ WorldFlags :: enum uint
     MultiThreaded = 1 << 6,
 }
 
-OsApiFlags :: enum uint
+OSApiFlags :: enum uint
 {
     HighResolutionTimer = 1 << 0,
     LogWithColors = 1 << 1,
