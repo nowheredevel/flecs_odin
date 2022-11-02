@@ -10,4 +10,11 @@ flags64_t :: c.uint64_t
 size_t :: c.int32_t
 
 map_key_t :: c.uint64_t
+
 va_list :: cstring
+
+os_thread_t :: c.uintptr_t
+os_cond_t :: c.uintptr_t
+os_mutex_t :: c.uintptr_t
+os_dl_t :: c.uintptr_t
+os_sock_t :: c.uintptr_t
