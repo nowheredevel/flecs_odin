@@ -188,6 +188,25 @@ foreign flecs
     os_set_api :: proc(os_api: ^OSApi) ---
     os_get_api :: proc() -> OSApi ---
     os_set_api_defaults :: proc() ---
+
+    // Logging
+    os_dbg :: proc(file: cstring, line: c.int32_t, msg: cstring) ---
+    os_trace :: proc(file: cstring, line: c.int32_t, msg: cstring) ---
+    os_warn :: proc(file: cstring, line: c.int32_t, msg: cstring) ---
+    os_err :: proc(file: cstring, line: c.int32_t, msg: cstring) ---
+    os_fatal :: proc(file: cstring, line: c.int32_t, msg: cstring) ---
+    os_strerror :: proc(err: c.int) -> cstring ---
+    sleepf :: proc(t: c.double) ---
+    time_measure :: proc(start: ^Time) -> c.double ---
+    time_sub :: proc(t1: Time, t2: Time) -> Time ---
+    time_to_double :: proc(t: Time) -> c.double ---
+    os_memdup :: proc(src: rawptr, size: size_t) -> rawptr ---
+    os_has_heap :: proc() -> bool ---
+    os_has_threading :: proc() -> bool ---
+    os_has_time :: proc() -> bool ---
+    os_has_logging :: proc() -> bool ---
+    os_has_dl :: proc() -> bool ---
+    os_has_modules :: proc() -> bool ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")

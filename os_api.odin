@@ -221,3 +221,18 @@ os_alloca_n :: proc($T: typeid, count: u32) -> ^T
 }
 
 // Strings
+os_strdup :: proc(str: cstring) -> cstring
+{
+    return GlobalOSApi.strdup_(str)
+}
+
+os_strset :: proc(dst: ^cstring, src: cstring)
+{
+    os_free(dst)
+    dst^ = os_strdup(src)
+}
+
+os_strlen :: proc(str: cstring) -> size_t
+{
+    return cast(size_t)len(str)
+}
