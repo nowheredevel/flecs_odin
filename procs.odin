@@ -207,6 +207,30 @@ foreign flecs
     os_has_logging :: proc() -> bool ---
     os_has_dl :: proc() -> bool ---
     os_has_modules :: proc() -> bool ---
+
+
+    // Vec
+    vec_init :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t, elem_count: c.int32_t) -> ^Vec ---
+    vec_fini :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t) ---
+    vec_clear :: proc(vec: ^Vec) ---
+    vec_append :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t) -> rawptr ---
+    vec_remove :: proc(vec: ^Vec, size: size_t, elem: c.int32_t) ---
+    vec_remove_last :: proc(vec: ^Vec) ---
+    vec_copy :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t) -> Vec ---
+    vec_reclaim :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t) ---
+    vec_set_size :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t, elem_count: c.int32_t) ---
+    vec_set_count :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t, elem_count: c.int32_t) ---
+    vec_grow :: proc(allocator: ^Allocator, vec: ^Vec, size: size_t, elem_count: c.int32_t) -> rawptr ---
+    vec_count :: proc(vec: ^Vec) -> c.int32_t ---
+    vec_size :: proc(vec: ^Vec) -> c.int32_t ---
+    vec_get :: proc(vec: ^Vec, size: size_t, index: c.int32_t) -> rawptr ---
+    vec_first :: proc(vec: ^Vec) -> rawptr ---
+    vec_last :: proc(vec: ^Vec, size: size_t) -> rawptr ---
+
+
+    // API support
+    module_path_from_c :: proc(c_name: cstring) -> cstring ---
+    default_ctor :: proc(ptr: rawptr, count: c.int32_t, ctx: ^TypeInfo) ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")

@@ -18,3 +18,5 @@ os_cond_t :: c.uintptr_t
 os_mutex_t :: c.uintptr_t
 os_dl_t :: c.uintptr_t
 os_sock_t :: c.uintptr_t
+
+ftime_t :: c.float

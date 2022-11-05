@@ -2,31 +2,15 @@ package flecs
 
 import "core:c"
 
-when ODIN_DEBUG
+VECTOR_T_SIZE :: proc() -> c.int32_t
 {
-    VECTOR_T_SIZE :: proc() -> c.int32_t
-    {
-        return size_of(c.int32_t) + size_of(c.int32_t) + size_of(c.int64_t)
-    }
+    return size_of(c.int32_t) + size_of(c.int32_t)
+}
 
-    Vector :: struct
-    {
-        count: c.int32_t,
-        size: c.int32_t,
-        elem_size: c.int64_t,
-    }
-} else
+Vector :: struct
 {
-    VECTOR_T_SIZE :: proc() -> c.int32_t
-    {
-        return size_of(c.int32_t) + size_of(c.int32_t)
-    }
-
-    Vector :: struct
-    {
-        count: c.int32_t,
-        size: c.int32_t,
-    }
+    count: c.int32_t,
+    size: c.int32_t,
 }
 
 VECTOR_U :: proc(size: c.int32_t, alignment: c.int32_t) -> (c.int32_t, c.int16_t)
