@@ -59,14 +59,14 @@ PAIR_SECOND :: proc($E) -> c.uint32_t
 // HAS_RELATION uses token pasting
 
 
-entity_t_lo :: proc($Value) -> c.uint32_t
+entity_t_lo :: proc(Val: Entity) -> c.uint32_t
 {
-    return cast(c.uint32_t)Value
+    return cast(c.uint32_t)Val
 }
 
-entity_t_hi :: proc($Value) -> c.uint32_t
+entity_t_hi :: proc(Val: Entity) -> c.uint32_t
 {
-    return cast(c.uint32_t)(Value >> 32)
+    return cast(c.uint32_t)(Val >> 32)
 }
 
 entity_t_comb :: proc($Lo, $Hi) -> c.uint64_t
