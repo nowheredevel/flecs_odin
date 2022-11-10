@@ -51,6 +51,20 @@ foreign flecs
     _map_set :: proc(map_t: ^Map, elem_size: size_t, key: map_key_t, payload: rawptr) -> rawptr ---
     _map_next :: proc(iter: ^MapIter, elem_size: size_t, key: ^map_key_t) -> rawptr ---
     _map_next_ptr :: proc(iter: ^MapIter, key: ^map_key_t) -> rawptr ---
+
+    // Tracing
+    _deprecated :: proc(file: cstring, line: c.int32_t, msg: cstring) ---
+    _log_push :: proc(level: c.int32_t) ---
+    _log_pop :: proc(level: c.int32_t) ---
+    
+    // Logging
+    _log :: proc(level: c.int32_t, file: cstring, line: c.int32_t, fmt: cstring) ---
+    _logv :: proc(level: c.int, file: cstring, line: c.int32_t, fmt: cstring, args: va_list) ---
+    _abort :: proc(error_code: c.int32_t, file: cstring, line: c.int32_t, fmt: cstring) ---
+    _assert :: proc(condition: c.bool, error_code: c.int32_t, condition_str: cstring, file: cstring, line: c.int32_t, fmt: cstring, args: ..any) -> c.bool ---
+    _parser_error :: proc(name: cstring, expr: cstring, column: c.int64_t, fmt: cstring, args: ..any) ---
+    _parser_errorv :: proc(name: cstring, expr: cstring, column: c.int64_t, fmt: cstring, args: va_list) ---
+
 }
 
 @(default_calling_convention = "c", link_prefix = "ecs_")
@@ -515,10 +529,20 @@ foreign flecs
     has_id :: proc(world: ^World, entity: Entity, id: id_t) -> c.bool ---
 
     // Get the target of a relationship
-    get_target :: proc(world: ^World, entity: Entity, rel: Entity, index: c.int32_t) -> Entity ---
+    get_target :: proc(
+        world: ^World, 
+        entity: Entity, 
+        rel: Entity, 
+        index: c.int32_t,
+    ) -> Entity ---
 
     // Get the target of a relationship for a given id
-    get_target_for_id :: proc(world: ^World, entity: Entity, rel: Entity, id: id_t) -> Entity ---
+    get_target_for_id :: proc(
+        world: ^World, 
+        entity: Entity, 
+        rel: Entity, 
+        id: id_t,
+    ) -> Entity ---
 
     // Enable or disable an entity
     enable :: proc(world: ^World, entity: Entity, enabled: c.bool) ---
@@ -751,6 +775,435 @@ foreign flecs
 
     // Set group to iterate for query iterator
     query_set_group :: proc(it: ^Iter, group_id: c.uint64_t) ---
+
+    // Get context of query group
+    query_get_group_ctx :: proc(query: ^Query, group_id: c.uint64_t) -> rawptr ---
+
+    // Get information about query group
+    query_get_group_info :: proc(query: ^Query, group_id: c.uint64_t) -> ^QueryGroupInfo ---
+
+    // Returns whether query is orphaned
+    query_orphaned :: proc(query: ^Query) -> c.bool ---
+
+    // Convert query to string
+    query_str :: proc(query: ^Query) -> cstring ---
+
+    // Returns number of tables query matched with
+    query_table_count :: proc(query: ^Query) -> c.int32_t ---
+
+    // Returns number of empty tables query matched with
+    query_empty_table_count :: proc(query: ^Query) -> c.int32_t ---
+
+    // Returns number of entities query matched with
+    query_entity_count :: proc(query: ^Query) -> c.int32_t ---
+
+    // Get entity associated with query
+    query_entity :: proc(query: ^Query) -> Entity ---
+
+    
+    // Observers
+
+
+    // Send event
+    emit :: proc(world: ^World, desc: ^EventDesc) ---
+
+    // Create observer
+    observer_init :: proc(world: ^World, desc: ^ObserverDesc) -> Entity ---
+
+    // Default run action for observer
+    observer_default_run_action :: proc(it: ^Iter) -> c.bool ---
+
+    get_observer_ctx :: proc(world: ^World, observer: Entity) -> rawptr ---
+
+    get_observer_binding_ctx :: proc(world: ^World, observer: Entity) -> rawptr ---
+
+
+    // Iterators
+
+
+    // Create iterator from poly object
+    iter_poly :: proc(
+        world: ^World,
+        poly: ^poly_t,
+        iter: ^Iter,
+        filter: ^Term,
+    ) ---
+
+    // Progress any iterator
+    iter_next :: proc(it: ^Iter) -> c.bool ---
+
+    // Cleanup iterator resources
+    iter_fini :: proc(it: ^Iter) ---
+
+    // Count number of matched entities in query
+    iter_count :: proc(it: ^Iter) -> c.int32_t ---
+
+    // Test if iterator is true
+    iter_is_true :: proc(it: ^Iter) -> c.bool ---
+
+    // Set value for iterator variable
+    iter_set_var :: proc(
+        it: ^Iter, 
+        var_id: c.int32_t, 
+        entity: Entity,
+    ) ---
+
+    // Same as iter_set_var, but for a table
+    iter_set_var_as_table :: proc(
+        it: ^Iter,
+        var_id: c.int32_t,
+        table: ^Table,
+    ) ---
+
+    // Same as iter_set_var, but for a range of entities
+    iter_set_var_as_range :: proc(
+        it: ^Iter,
+        var_id: c.int32_t,
+        range: ^TableRange,
+    ) ---
+
+    // Get value of iterator variable as entity
+    iter_get_var :: proc(it: ^Iter, var_id: c.int32_t) -> Entity ---
+
+    // Get value of iterator variable as table
+    iter_get_var_as_table :: proc(it: ^Iter, var_id: c.int32_t) -> ^Table ---
+
+    // Get value of iterator variable as table range
+    iter_get_var_as_range :: proc(it: ^Iter, var_id: c.int32_t) -> TableRange ---
+
+    // Returns whether variable is constrained
+    iter_var_is_constrained :: proc(it: ^Iter, var_id: c.int32_t) -> c.bool ---
+
+    // Create a paged iterator
+    page_iter :: proc(it: ^Iter, offset: c.int32_t, limit: c.int32_t) -> Iter ---
+
+    // Progress a paged iterator
+    page_next :: proc(it: ^Iter) -> c.bool ---
+
+    // Create a worker iterator
+    worker_iter :: proc(it: ^Iter, index: c.int32_t, count: c.int32_t) -> Iter ---
+
+    // Progress a worker iterator
+    worker_next :: proc(it: ^Iter) -> c.bool ---
+
+    // Obtain data for a query field
+    field_w_size :: proc(it: ^Iter, size: size_t, index: c.int32_t) -> rawptr ---
+
+    // Test whether the field is readonly
+    field_is_readonly :: proc(it: ^Iter, index: c.int32_t) -> c.bool ---
+
+    // Test whether the field is writeonly
+    field_is_writeonly :: proc(it: ^Iter, index: c.int32_t) -> c.bool ---
+
+    // Test whether field is set
+    field_is_set :: proc(it: ^Iter, index: c.int32_t) -> c.bool ---
+
+    // Return id matched for field
+    field_id :: proc(it: ^Iter, index: c.int32_t) -> id_t ---
+
+    // Return field source
+    field_src :: proc(it: ^Iter, index: c.int32_t) -> Entity ---
+
+    // Return field type size
+    field_size :: proc(it: ^Iter, index: c.int32_t) -> size_t ---
+
+    // Test whether the field is matched on self
+    field_is_self :: proc(it: ^Iter, index: c.int32_t) -> c.bool ---
+
+    // Convert iterator to string
+    iter_str :: proc(it: ^Iter) -> cstring ---
+
+    // Find the column index for a given id
+    iter_find_column :: proc(it: ^Iter, id: id_t) -> c.int32_t ---
+
+    // Obtain data for a column index
+    iter_column_w_size :: proc(
+        it: ^Iter,
+        size: size_t,
+        index: c.int32_t,
+    ) -> rawptr ---
+
+    // Obtain size for a column index
+    iter_column_size :: proc(it: ^Iter, index: c.int32_t) -> size_t ---
+
+
+    // Staging
+
+
+    // Begin frame
+    frame_begin :: proc(world: ^World, delta_time: ftime_t) -> ftime_t ---
+
+    // End frame
+    frame_end :: proc(world: ^World) ---
+
+    // Begin readonly mode
+    readonly_begin :: proc(world: ^World) -> c.bool ---
+
+    // End readonly mode
+    readonly_end :: proc(world: ^World) ---
+
+    // Merge world or stage
+    merge :: proc(world: ^World) ---
+
+    // Defer operations until end of frame
+    defer_begin :: proc(world: ^World) -> c.bool ---
+
+    // Test if deferring is enabled for current stage
+    is_deferred :: proc(world: ^World) -> c.bool ---
+
+    // End block of operations to defer
+    defer_end :: proc(world: ^World) -> c.bool ---
+
+    // Suspend deferring but do not flush queue
+    defer_suspend :: proc(world: ^World) ---
+
+    // Resume deferring
+    defer_resume :: proc(world: ^World) ---
+
+    // Enable/disable automerging for world or stage
+    set_automerge :: proc(world: ^World, automerge: c.bool) ---
+
+    // Configure world to have N stages
+    set_stage_count :: proc(world: ^World, stages: c.int32_t) ---
+
+    // Get number of configured stages
+    get_stage_count :: proc(world: ^World) -> c.int32_t ---
+
+    // Get current stage id
+    get_stage_id :: proc(world: ^World) -> c.int32_t ---
+
+    // Get stage-specific world pointer
+    get_stage :: proc(world: ^World, stage_id: c.int32_t) -> ^World ---
+
+    // Get actual world from world
+    get_world :: proc(world: ^poly_t) -> ^World ---
+
+    // Test whether the current world is readonly
+    stage_is_readonly :: proc(world: ^World) -> c.bool ---
+
+    // Create asynchronous stage
+    async_stage_new :: proc(world: ^World) -> ^World ---
+
+    // Free asynchronous stage
+    async_stage_free :: proc(stage: ^World) ---
+
+    // Test whether provided stage is asynchronous
+    stage_is_async :: proc(stage: ^World) -> c.bool ---
+
+    
+    // Low level functions to search for component ids in table types
+
+
+    // Search for component id in table type
+    search :: proc(
+        world: ^World,
+        table: ^Table,
+        id: id_t,
+        id_out: ^id_t,
+    ) -> c.int32_t ---
+
+    // Search for component id in table type starting from an offset
+    search_offset :: proc(
+        world: ^World,
+        table: ^Table,
+        offset: c.int32_t,
+        id: id_t,
+        id_out: ^id_t,
+    ) -> c.int32_t ---
+
+    // Search for component/relationship id in table type starting
+    // from an offset
+    search_relation :: proc(
+        world: ^World,
+        table: ^Table,
+        offset: c.int32_t,
+        id: id_t,
+        rel: Entity,
+        flags: flags32_t,
+        subject_out: ^Entity,
+        id_out: ^id_t,
+        tr_out: [^]TableRecord,
+    ) -> c.int32_t ---
+
+
+    // Public table operations
+
+
+    // Get type for table
+    table_get_type :: proc(table: ^Table) -> ^Type ---
+
+    // Get column from table
+    table_get_column :: proc(table: ^Table, index: c.int32_t) -> rawptr ---
+
+    // Get column index for id
+    table_get_index :: proc(world: ^World, table: ^Table, id: id_t) -> c.int32_t ---
+
+    // Get storage type for table
+    table_get_storage_table :: proc(table: ^Table) -> ^Table ---
+
+    // Convert index in table type to index in table storage type
+    table_type_to_storage_index :: proc(table: ^Table, index: c.int32_t) -> c.int32_t ---
+
+    // Convert index in table storage type to index in table type
+    table_storage_to_type_index :: proc(table: ^Table, index: c.int32_t) -> c.int32_t ---
+
+    // Returns the number of records in the table
+    table_count :: proc(table: ^Table) -> c.int32_t ---
+
+    // Get table that has all components of current table plus the
+    // specified id
+    table_add_id :: proc(world: ^World, table: ^Table, id: id_t) -> ^Table ---
+
+    // Get table that has all components of current table minus the
+    // specified id
+    table_remove_id :: proc(world: ^World, table: ^Table, id: id_t) -> ^Table ---
+
+    // Lock or unlock table
+    table_lock :: proc(world: ^World, table: ^Table) ---
+
+    // Unlock a table
+    table_unlock :: proc(world: ^World, table: ^Table) ---
+
+    // Returns whether table is a module or contains module contents
+    table_has_module :: proc(table: ^Table) -> c.bool ---
+
+    // Swaps two elements inside the table
+    table_swap_rows :: proc(
+        world: ^World,
+        table: ^Table,
+        row_1: c.int32_t,
+        row_2: c.int32_t,
+    ) ---
+
+    // Commit (move) entity to a table
+    commit :: proc(
+        world: ^World,
+        entity: Entity,
+        record: ^Record,
+        table: ^Table,
+        added: ^Type,
+        removed: ^Type,
+    ) -> c.bool ---
+
+    // Find record for entity
+    record_find :: proc(world: ^World, entity: Entity) -> ^Record ---
+
+    // Get component pointer from column/record
+    record_get_column :: proc(r: ^Record, column: c.int32_t, c_size: size_t) -> rawptr ---
+
+
+    // Values API for dynamic values
+
+
+    // Construct a value in existing storage
+    value_init :: proc(world: ^World, type: Entity, ptr: rawptr) -> c.int ---
+
+    // Construct a value in existing storage with type info
+    value_init_w_type_info :: proc(
+        world: ^World,
+        ti: ^TypeInfo,
+        ptr: rawptr,
+    ) -> c.int ---
+
+    // Construct a value in new storage
+    value_new :: proc(
+        world: ^World,
+        type: Entity,
+    ) -> rawptr ---
+
+    // Destruct a value
+    value_fini_w_type_info :: proc(
+        world: ^World,
+        ti: ^TypeInfo,
+        ptr: rawptr,
+    ) -> c.int ---
+
+    // Destruct a value
+    value_fini :: proc(
+        world: ^World,
+        type: Entity,
+        ptr: rawptr,
+    ) -> c.int ---
+
+    // Destruct a value, free storage
+    value_free :: proc(
+        world: ^World,
+        type: Entity,
+        ptr: rawptr,
+    ) -> c.int ---
+
+    // Copy value
+    value_copy_w_type_info :: proc(
+        world: ^World,
+        ti: ^TypeInfo,
+        dst: rawptr,
+        src: rawptr,
+    ) -> c.int ---
+
+    // Copy value
+    value_copy :: proc(
+        world: ^World,
+        type: Entity,
+        dst: rawptr,
+        src: rawptr,
+    ) -> c.int ---
+
+    // Move value
+    value_move_w_type_info :: proc(
+        world: ^World,
+        ti: ^TypeInfo,
+        dst: rawptr,
+        src: rawptr,
+    ) -> c.int ---
+
+    // Move value
+    value_move :: proc(
+        world: ^World,
+        type: Entity,
+        dst: rawptr,
+        src: rawptr,
+    ) -> c.int ---
+
+    // Move construct value
+    value_move_ctor_w_type_info :: proc(
+        world: ^World,
+        ti: ^TypeInfo,
+        dst: rawptr,
+        src: rawptr,
+    ) -> c.int ---
+
+    // Move construct value
+    value_move_ctor :: proc(
+        world: ^World,
+        type: Entity,
+        dst: rawptr,
+        src: rawptr,
+    ) -> c.int ---
+
+    
+    // Log
+
+
+    // Should current level be logged
+    should_log :: proc(level: c.int32_t) -> c.bool ---
+
+    // Get description for error code
+    strerror :: proc(error_code: c.int32_t) -> cstring ---
+
+    // Enable or disable tracing
+    log_set_level :: proc(level: c.int) -> c.int ---
+
+    // Enable/disable tracing with colors
+    log_enable_colors :: proc(enabled: c.bool) -> c.bool ---
+
+    // Enable/disable logging timestamp
+    log_enable_timestamp :: proc(enabled: c.bool) -> c.bool ---
+
+    // Enable/disable logging time since last log
+    log_enable_timedelta :: proc(enabled: c.bool) -> c.bool ---
+
+    // Get last logged error code
+    log_last_error :: proc() -> c.int ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")

@@ -657,3 +657,10 @@ IterPrivate :: struct
 }
 
 // Iter definition
+
+
+IdRecordElem :: struct
+{
+    prev: ^IdRecord,
+    next: ^IdRecord,
+}

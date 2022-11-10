@@ -340,3 +340,17 @@ WorldAllocators :: struct
 
     diff_builder: TableDiffBuilder,
 }
+
+EventDesc :: struct
+{
+    event: Entity,
+    ids: [^]Type,
+    table: ^Table,
+    other_table: ^Table,
+    offset: c.int32_t,
+    count: c.int32_t,
+    param: rawptr,
+    observable: ^poly_t,
+    table_event: c.bool,
+    relationship: Entity,
+}
