@@ -1204,6 +1204,84 @@ foreign flecs
 
     // Get last logged error code
     log_last_error :: proc() -> c.int ---
+
+
+    // App addon
+
+
+    // Run application
+    app_run :: proc(world: ^World, desc: ^AppDesc) -> c.int ---
+
+    // Default frame callback
+    app_run_frame :: proc(world: ^World, desc: ^AppDesc) -> c.int ---
+
+    // Set custom run action
+    app_set_run_action :: proc(callback: app_run_action_t) -> c.int ---
+
+    app_set_frame_action :: proc(callback: app_frame_action_t) -> c.int ---
+
+
+    // Timer addon
+
+
+    // Set timer timeout
+    set_timeout :: proc(world: ^World, tick_source: Entity, timeout: ftime_t) -> Entity ---
+
+    // Get current timeout value for the specified timer
+    get_timeout :: proc(world: ^World, tick_source: Entity) -> ftime_t ---
+
+    // Set timer interval
+    set_interval :: proc(world: ^World, tick_source: Entity, interval: ftime_t) -> Entity ---
+
+    // Get current interval value for the specified timer
+    get_interval :: proc(world: ^World, tick_source: Entity) -> ftime_t ---
+
+    // Start timer
+    start_timer :: proc(world: ^World, tick_source: Entity) ---
+
+    // Stop timer
+    stop_timer :: proc(world: ^World, tick_source: Entity) ---
+
+    // Set rate filter
+    set_rate :: proc(world: ^World, tick_source: Entity, rate: c.int32_t, source: Entity) -> Entity ---
+
+    // Assign tick source to system
+    set_tick_source :: proc(world: ^World, system: Entity, tick_source: Entity) ---
+
+
+    // Pipeline addon
+
+
+    // Create a custom pipeline
+    pipeline_init :: proc(world: ^World, desc: ^PipelineDesc) -> Entity ---
+
+    // Set a custom pipeline
+    set_pipeline :: proc(world: ^World, pipeline: Entity) ---
+
+    // Get the current pipeline
+    get_pipeline :: proc(world: ^World) -> Entity ---
+
+    // Progress a world
+    progress :: proc(world: ^World, delta_time: ftime_t) -> c.bool ---
+
+    // Set time scale
+    set_time_scale :: proc(world: ^World, scale: ftime_t) ---
+
+    // Reset world clock
+    reset_clock :: proc(world: ^World) ---
+
+    // Run pipeline
+    run_pipeline :: proc(world: ^World, pipeline: Entity, delta_time: ftime_t) ---
+
+    // Set number of worker threads
+    set_threads :: proc(world: ^World, threads: c.int32_t) ---
+
+
+    // System addon
+
+
+    // Create a system
+    system_init :: proc(world: ^World, desc: ^SystemDesc) -> Entity ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")

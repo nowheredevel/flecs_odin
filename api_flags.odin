@@ -13,16 +13,47 @@ IdBitFlags :: enum id_t
 }
 
 // Builtin components and tags
+EcsComponentGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsComponent)
+}
+
+EcsIdentifierGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsIdentifier)
+}
+
+EcsIterableGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsIterable)
+}
+
+EcsPolyGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsPoly)
+}
+
 EcsQuery : Entity : 5
 EcsObserver : Entity : 7
 
 // System module component ids
 EcsSystem : Entity : 10
-EcsTickSource : Entity : 11
+
+EcsTickSourceGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsTickSource)
+}
 
 // Timer module component ids
-EcsTimer : Entity : 13
-EcsRateFilter : Entity : 14
+EcsTimerGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsTimer)
+}
+
+EcsRateFilterGet :: proc(world: ^World) -> Entity
+{
+    return id(world, EcsRateFilter)
+}
 
 // Root scope for builtin flecs entities
 EcsFlecs : Entity : HI_COMPONENT_ID + 1
