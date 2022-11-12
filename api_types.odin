@@ -334,7 +334,7 @@ VARIABLE_COUNT_MAX :: 64
 
 // Function Prototypes
 run_action_t :: #type proc "c" (it: ^Iter)
-iter_action_t :: #type proc "c" (it: ^Iter)
+iter_action_t :: #type proc (it: ^Iter)
 iter_init_action_t :: #type proc "c" (world: ^World, iterable: ^poly_t, it: ^Iter, filter: ^Term)
 iter_next_action_t :: #type proc "c" (it: ^Iter) -> c.bool
 iter_fini_action_t :: #type proc "c" (it: ^Iter)

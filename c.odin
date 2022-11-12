@@ -23,7 +23,7 @@ _GetTypeName :: proc($T: typeid) -> string
     return type_name
 }
 
-TagDefine :: proc(world: ^World, $T: typeid)
+Tag :: proc(world: ^World, $T: typeid)
 {
     desc: EntityDesc
 
@@ -32,7 +32,7 @@ TagDefine :: proc(world: ^World, $T: typeid)
     id := entity_init(world, &desc)
 }
 
-ComponentDefine :: proc(world: ^World, $T: typeid)
+Component :: proc(world: ^World, $T: typeid)
 {
     ti := type_info_of(T)
 
@@ -460,12 +460,12 @@ add_fullpath :: proc(world: ^World, entity: Entity, path: cstring) -> Entity
 // Iterators
 
 
-field :: proc(it: ^Iter, $T: typeid, index: c.int32_t) -> ^T
+field :: proc(it: ^Iter, $T: typeid, index: c.int32_t) -> [^]T
 {
     return cast(^T)field_w_size(it, size_of(T), index)
 }
 
-iter_column :: proc(it: ^Iter, $T: typeid, index: c.int32_t) -> ^T
+iter_column :: proc(it: ^Iter, $T: typeid, index: c.int32_t) -> [^]T
 {
     return cast(^T)iter_column_w_size(it, size_of(T), index)
 }

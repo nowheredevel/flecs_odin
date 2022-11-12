@@ -30,10 +30,14 @@ SystemDesc :: struct
     no_staging: c.bool,
 }
 
-SystemDefine :: proc(world: ^World, func: iter_action_t, phase: c.uint64_t, $args: ..typeid)
+System :: proc(world: ^World, name: cstring = nil, func: iter_action_t, phase: c.uint64_t, args: cstring)
 {
     sdesc: SystemDesc
     edesc: EntityDesc
+
+    edesc.name = name
+    edesc.add[0] = phase != 0 ? pair(EcsDependsOn, phase) : 0
+    edesc.add[1] = phase
 
     sdesc.entity = entity_init(world, &edesc)
     sdesc.query.filter.expr = args

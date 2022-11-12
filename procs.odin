@@ -1282,6 +1282,47 @@ foreign flecs
 
     // Create a system
     system_init :: proc(world: ^World, desc: ^SystemDesc) -> Entity ---
+
+    // Run a specific system manually
+    run :: proc(world: ^World, system: Entity, delta_time: ftime_t, param: rawptr) -> Entity ---
+
+    // Same as run, but subdivides entities across num of provided stages
+    run_worker :: proc(
+        world: ^World, 
+        system: Entity,
+        stage_current: c.int32_t,
+        stage_count: c.int32_t,
+        delta_time: ftime_t,
+        param: rawptr,
+    ) -> Entity ---
+
+    // Run system with offset/limit and type filter
+    run_w_filter :: proc(
+        world: ^World,
+        system: Entity,
+        delta_time: ftime_t,
+        offset: c.int32_t,
+        limit: c.int32_t,
+        param: rawptr,
+    ) -> Entity ---
+
+    // Get the query object for a system
+    system_get_query :: proc(
+        world: ^World,
+        system: Entity,
+    ) -> ^Query ---
+
+    // Get system context
+    get_system_ctx :: proc(
+        world: ^World,
+        system: Entity,
+    ) -> rawptr ---
+
+    // Get system binding context
+    get_system_binding_ctx :: proc(
+        world: ^World,
+        system: Entity,
+    ) -> rawptr ---
 }
 
 @(default_calling_convention = "c", link_prefix = "flecs_")
