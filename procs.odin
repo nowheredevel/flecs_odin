@@ -24,6 +24,11 @@ foreign flecs
     os_set_api :: proc(os_api: ^OS_API) ---
     os_get_api :: proc() -> OS_API ---
     os_set_api_defaults :: proc() ---
+
+    // API Support
+    module_path_from_c :: proc(c_name: cstring) -> cstring ---
+    default_ctor :: proc(ptr: rawptr, count: i32, ctx: ^Type_Info) ---
+    asprintf :: proc(fmt: cstring, #c_vararg args: ..any) -> cstring ---
 }
 
 // Flecs functions
