@@ -1,6 +1,9 @@
 # flecs-odin
  An almost complete binding of flecs to the Odin programming language,
  version should match up with the latest flecs release (current: 3.1.0)
+
+## BRANCH NOTE
+ This branch is for a complete rewrite of the repo. The goals of this branch are to ensure full support for flecs 3.2.0, while also having compliance with Odin's naming conventions and properly organized files.
  
 ## NOTE
  This is basically complete, with most core functionality (including systems) working, but some things like modules aren't included because I stopped working on this a while ago. If you'd like to contribute, feel free to open a pull request!
