@@ -11,7 +11,8 @@ when ODIN_OS == .Windows
 @(default_calling_convention = "c", link_prefix = "_ecs", private)
 foreign flecs
 {
-    
+    // Map
+    _map_get_deref :: proc(map_: ^Map, key: Map_Key) -> rawptr ---
 }
 
 // Public functions
@@ -29,6 +30,26 @@ foreign flecs
     module_path_from_c :: proc(c_name: cstring) -> cstring ---
     default_ctor :: proc(ptr: rawptr, count: i32, ctx: ^Type_Info) ---
     asprintf :: proc(fmt: cstring, #c_vararg args: ..any) -> cstring ---
+
+    // Map
+    map_params_init :: proc(params: ^Map_Params, allocator: ^Allocator) ---
+    map_params_fini :: proc(params: ^Map_Params) ---
+    map_init :: proc(map_: ^Map, allocator: ^Allocator) ---
+    map_init_w_params :: proc(map_: ^Map, params: ^Map_Params) ---
+    map_init_if :: proc(map_: ^Map, allocator: ^Allocator) ---
+    map_init_w_params_if :: proc(result: ^Map, params: ^Map_Params) ---
+    map_fini :: proc(map_: ^Map) ---
+    map_get :: proc(map_: ^Map, key: Map_Key) -> ^Map_Val ---
+    map_ensure :: proc(map_: ^Map, key: Map_Key) -> ^Map_Val ---
+    map_ensure_alloc :: proc(map_: ^Map, elem_size: Size, key: Map_Key) -> rawptr ---
+    map_insert :: proc(map_: ^Map, key: Map_Key, value: Map_Val) ---
+    map_insert_alloc :: proc(map_: ^Map, elem_size: Size, key: Map_Key) -> rawptr ---
+    map_remove :: proc(map_: ^Map, key: Map_Key) -> Map_Val ---
+    map_remove_free :: proc(map_: ^Map, key: Map_Key) ---
+    map_clear :: proc(map_: ^Map) ---
+    map_iter :: proc(map_: ^Map) -> Map_Iter ---
+    map_next :: proc(iter: ^Map_Iter) -> c.bool ---
+    map_copy :: proc(dst: ^Map, src: ^Map) ---
 }
 
 // Flecs functions
