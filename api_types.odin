@@ -60,12 +60,7 @@ Data :: struct
     bs_columns: ^BitSet,
 }
 
-Switch :: struct
-{
-    hdrs: Map,
-    nodes: Vec,
-    values: Vec,
-}
+// Switch defined in switch_list.odin
 
 Query_Table_Node :: struct
 {
