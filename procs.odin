@@ -42,4 +42,15 @@ foreign flecs
     strdup :: proc(a: ^Allocator, str: cstring) -> cstring ---
     strfree :: proc(a: ^Allocator, str: cstring) ---
     dup :: proc(a: ^Allocator, size: Size, src: rawptr) -> rawptr ---
+
+    // Block_Allocator
+    ballocator_init :: proc(ba: ^Block_Allocator, size: Size) ---
+    ballocator_new :: proc(size: Size) -> ^Block_Allocator ---
+    ballocator_fini :: proc(ba: ^Block_Allocator) ---
+    ballocator_free :: proc(ba: ^Block_Allocator) ---
+    balloc :: proc(allocator: ^Block_Allocator) -> rawptr ---
+    bcalloc :: proc(allocator: ^Block_Allocator) -> rawptr ---
+    bfree :: proc(allocator: ^Block_Allocator, memory: rawptr) ---
+    brealloc :: proc(dst: ^Block_Allocator, src: ^Block_Allocator, memory: rawptr) -> rawptr ---
+    bdup :: proc(ba: ^Block_Allocator, memory: rawptr) -> rawptr ---
 }

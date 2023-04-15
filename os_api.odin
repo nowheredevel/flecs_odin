@@ -18,7 +18,7 @@ OS_DL :: c.uintptr_t
 OS_Sock :: c.uintptr_t
 
 // 64-bit thread id
-OS_Thread_ID :: u64
+OS_Thread_Id :: u64
 
 // Generic function pointer type
 OS_Proc :: #type proc "c" ()
