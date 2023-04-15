@@ -58,6 +58,31 @@ foreign flecs
     sparse_count :: proc(sparse: ^Sparse) -> i32 ---
     sparse_get_dense :: proc(sparse: ^Sparse, elem_size: Size, index: i32) -> rawptr ---
     sparse_get :: proc(sparse: ^Sparse, elem_size: Size, id: u64) -> rawptr ---
+
+    // StrBuf
+    strbuf_append :: proc(buffer: ^StrBuf, fmt: cstring, #c_vararg args: ..any) -> c.bool ---
+    strbuf_vappend :: proc(buffer: ^StrBuf, fmt: cstring, args: cstring) -> c.bool ---
+    strbuf_appendstr :: proc(buffer: ^StrBuf, str: cstring) -> c.bool ---
+    strbuf_appendch :: proc(buffer: ^StrBuf, ch: c.char) -> c.bool ---
+    strbuf_appendint :: proc(buffer: ^StrBuf, v: i64) -> c.bool ---
+    strbuf_appendflt :: proc(buffer: ^StrBuf, v: c.double, nan_delim: c.char) -> c.bool ---
+    strbuf_mergebuff :: proc(dst_buffer: ^StrBuf, src_buffer: ^StrBuf) -> c.bool ---
+    strbuf_appendstr_zerocpy :: proc(buffer: ^StrBuf, str: cstring) -> c.bool ---
+    strbuf_appendstr_zerocpyn :: proc(buffer: ^StrBuf, str: cstring, n: i32) -> c.bool ---
+    strbuf_appendstr_zerocpy_const :: proc(buffer: ^StrBuf, str: cstring) -> c.bool ---
+    strbuf_appendstr_zerocpyn_const :: proc(buffer: ^StrBuf, str: cstring, n: i32) -> c.bool ---
+    strbuf_appendstrn :: proc(buffer: ^StrBuf, str: cstring, n: i32) -> c.bool ---
+    strbuf_get :: proc(buffer: ^StrBuf) -> cstring ---
+    strbuf_get_small :: proc(buffer: ^StrBuf) -> cstring ---
+    strbuf_reset :: proc(buffer: ^StrBuf) ---
+    strbuf_list_push :: proc(buffer: ^StrBuf, list_open: cstring, separator: cstring) ---
+    strbuf_list_pop :: proc(buffer: ^StrBuf, list_close: cstring) ---
+    strbuf_list_next :: proc(buffer: ^StrBuf) ---
+    strbuf_list_appendch :: proc(buffer: ^StrBuf, ch: c.char) -> c.bool ---
+    strbuf_list_append :: proc(buffer: ^StrBuf, fmt: cstring, #c_vararg args: ..any) -> c.bool ---
+    strbuf_list_appendstr :: proc(buffer: ^StrBuf, str: cstring) -> c.bool ---
+    strbuf_list_appendstrn :: proc(buffer: ^StrBuf, str: cstring, n: i32) -> c.bool ---
+    strbuf_written :: proc(buffer: ^StrBuf) -> i32 ---
 }
 
 // Flecs functions
