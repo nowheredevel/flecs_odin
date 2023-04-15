@@ -50,6 +50,14 @@ foreign flecs
     map_iter :: proc(map_: ^Map) -> Map_Iter ---
     map_next :: proc(iter: ^Map_Iter) -> c.bool ---
     map_copy :: proc(dst: ^Map, src: ^Map) ---
+
+    // Sparse
+    sparse_init :: proc(sparse: ^Sparse, elem_size: Size) ---
+    sparse_add :: proc(sparse: ^Sparse, elem_size: Size) -> rawptr ---
+    sparse_last_id :: proc(sparse: ^Sparse) -> u64 ---
+    sparse_count :: proc(sparse: ^Sparse) -> i32 ---
+    sparse_get_dense :: proc(sparse: ^Sparse, elem_size: Size, index: i32) -> rawptr ---
+    sparse_get :: proc(sparse: ^Sparse, elem_size: Size, id: u64) -> rawptr ---
 }
 
 // Flecs functions
@@ -74,4 +82,7 @@ foreign flecs
     bfree :: proc(allocator: ^Block_Allocator, memory: rawptr) ---
     brealloc :: proc(dst: ^Block_Allocator, src: ^Block_Allocator, memory: rawptr) -> rawptr ---
     bdup :: proc(ba: ^Block_Allocator, memory: rawptr) -> rawptr ---
+
+    // Sparse
+    sparse_set_generation :: proc(sparse: ^Sparse, id: u64) ---
 }
