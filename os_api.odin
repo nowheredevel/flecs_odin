@@ -42,7 +42,7 @@ OS_API_Strdup :: #type proc "c" (str: cstring) -> cstring
 OS_Thread_Callback :: #type proc "c" (_: rawptr) -> rawptr
 OS_API_Thread_New :: #type proc "c" (callback: OS_Thread_Callback, param: rawptr) -> OS_Thread
 OS_API_Thread_Join :: #type proc "c" (thread: OS_Thread) -> rawptr
-OS_API_Thread_Self :: #type proc "c" () -> OS_Thread_ID
+OS_API_Thread_Self :: #type proc "c" () -> OS_Thread_Id
 
 
 /// Atomic Increment/Decrement

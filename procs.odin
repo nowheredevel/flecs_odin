@@ -83,6 +83,28 @@ foreign flecs
     strbuf_list_appendstr :: proc(buffer: ^StrBuf, str: cstring) -> c.bool ---
     strbuf_list_appendstrn :: proc(buffer: ^StrBuf, str: cstring, n: i32) -> c.bool ---
     strbuf_written :: proc(buffer: ^StrBuf) -> i32 ---
+
+    // Vec
+    vec_init :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) -> ^Vec ---
+    vec_init_if :: proc(vec: ^Vec, size: Size) ---
+    vec_fini :: proc(allocator: ^Allocator, vec: ^Vec, size: Size) ---
+    vec_reset :: proc(allocator: ^Allocator, vec: ^Vec, size: Size) -> ^Vec ---
+    vec_clear :: proc(vec: ^Vec) ---
+    vec_append :: proc(allocator: ^Allocator, vec: ^Vec, size: Size) -> rawptr ---
+    vec_remove :: proc(vec: ^Vec, size: Size, elem: i32) ---
+    vec_remove_last :: proc(vec: ^Vec) ---
+    vec_copy :: proc(allocator: ^Allocator, vec: ^Vec, size: Size) -> Vec ---
+    vec_reclaim :: proc(allocator: ^Allocator, vec: ^Vec, size: Size) ---
+    vec_set_size :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
+    vec_set_min_size :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
+    vec_set_min_count :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
+    vec_set_count :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
+    vec_grow :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) -> rawptr ---
+    vec_count :: proc(vec: ^Vec) -> i32 ---
+    vec_size :: proc(vec: ^Vec) -> i32 ---
+    vec_get :: proc(vec: ^Vec, size: Size, index: i32) -> rawptr ---
+    vec_first :: proc(vec: ^Vec) -> rawptr ---
+    vec_last :: proc(vec: ^Vec, size: Size) -> rawptr ---
 }
 
 // Flecs functions
