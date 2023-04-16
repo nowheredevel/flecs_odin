@@ -57,13 +57,12 @@ IS_PAIR :: proc(id: u64) -> u64
     return ((id) & ID_FLAGS_MASK) == PAIR
 }
 
-// TODO: Replace generics with entities
-PAIR_FIRST :: proc($E) -> u32
+PAIR_FIRST :: proc(E: Entity) -> u32
 {
     return Entity_Hi(E & COMPONENT_MASK)
 }
 
-PAIR_SECOND :: proc($E) -> u32
+PAIR_SECOND :: proc(E: Entity) -> u32
 {
     return Entity_Lo(E)
 }
