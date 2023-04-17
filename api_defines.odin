@@ -129,6 +129,6 @@ Poly_Id :: proc(world: ^World, tag: Entity) -> u64
 Iter_Action :: enum
 {
     NextYield = 0, // Move onto next table, yield current
-    CurYield = -1, // Stay on current table, yield
+    Yield = -1, // Stay on current table, yield
     Next = 1, // Move to next table, don't yield
 }

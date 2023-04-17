@@ -137,6 +137,7 @@ Query_Flags :: enum u32
     Is_Orphaned = 1 << 3,
     Has_Out_Columns = 1 << 4,
     Has_Monitor = 1 << 5,
+    Trivial_Iter = 1 << 6,
 }
 
 Aperiodic_Action_Flags :: enum u32

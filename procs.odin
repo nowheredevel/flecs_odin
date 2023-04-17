@@ -98,6 +98,7 @@ foreign flecs
     vec_set_size :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
     vec_set_min_size :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
     vec_set_min_count :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
+    vec_set_min_count_zeromem :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
     vec_set_count :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) ---
     vec_grow :: proc(allocator: ^Allocator, vec: ^Vec, size: Size, elem_count: i32) -> rawptr ---
     vec_count :: proc(vec: ^Vec) -> i32 ---

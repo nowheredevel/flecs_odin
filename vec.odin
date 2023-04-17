@@ -64,6 +64,11 @@ vec_set_min_count_t :: proc(allocator: ^Allocator, vec: ^Vec, $T: typeid, elem_c
     vec_set_min_count(allocator, vec, size_of(T), elem_count)
 }
 
+vec_set_min_count_zeromem_t :: proc(allocator: ^Allocator, vec: ^Vec, $T: typeid, elem_count: i32)
+{
+    vec_set_min_count_zeromem(allocator, vec, size_of(T), elem_count)
+}
+
 vec_set_count_t :: proc(allocator: ^Allocator, vec: ^Vec, $T: typeid, elem_count: i32)
 {
     vec_set_count(allocator, vec, size_of(T), elem_count)

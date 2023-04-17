@@ -56,8 +56,6 @@ Data :: struct
     entities: Vec,
     records: Vec,
     columns: ^Vec,
-    sw_columns: ^Switch,
-    bs_columns: ^BitSet,
 }
 
 // Switch defined in switch_list.odin
@@ -239,10 +237,9 @@ Iter_Cache_Bits :: enum u32
     Ids = 1 << 0,
     Columns = 1 << 1,
     Sources = 1 << 2,
-    Sizes = 1 << 3,
-    Ptrs = 1 << 4,
-    Match_Indices = 1 << 5,
-    Variables = 1 << 6,
+    Ptrs = 1 << 3,
+    Match_Indices = 1 << 4,
+    Variables = 1 << 5,
     All = 255,
 }
 

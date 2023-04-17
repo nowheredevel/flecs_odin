@@ -2,7 +2,7 @@ package flecs
 
 import "core:c"
 
-SPARSE_CHUNK_SIZE :: 4096
+SPARSE_PAGE_SIZE :: 1 << SPARSE_PAGE_BITS
 
 Sparse :: struct
 {
