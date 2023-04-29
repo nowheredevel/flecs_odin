@@ -327,7 +327,14 @@ Table_Record :: struct
     count: i32,
 }
 
-Poly :: c.void
+/** NOTE: In flecs, ecs_poly_t is a type alias to a void. However,
+* Odin doesn't have a void type, the closest is rawptr but that's
+* actually a pointer to a void. Luckily, whenever poly is used in
+* flecs, it's always used as a pointer to poly, so in flecs_odin
+* we store Poly as a rawptr and never store pointers to Poly, just
+* Poly itself.
+*/
+Poly :: rawptr
 
 Mixins :: struct
 {
@@ -343,3 +350,453 @@ Header :: struct
 }
 
 /// Function types
+Run_Action :: #type proc "c" (it: ^Iter)
+Iter_Action :: #type proc "c" (it: ^Iter)
+Iter_Init_Action :: #type proc "c" (world: ^World, iterable: Poly, it: ^Iter, filter: ^Term)
+Iter_Next_Action :: #type proc "c" (it: ^Iter) -> c.bool
+Iter_Fini_Action :: #type proc "c" (it: ^Iter)
+
+Order_By_Action :: #type proc "c" (
+    e1: Entity, 
+    ptr1: rawptr, 
+    e2: Entity, 
+    ptr2: rawptr,
+) -> c.int
+
+Sort_Table_Action :: #type proc "c" (
+    world: ^World,
+    table: ^Table,
+    entities: [^]Entity,
+    ptr: rawptr,
+    size: i32,
+    lo: i32,
+    hi: i32,
+    order_by: Order_By_Action,
+)
+
+Group_By_Action :: #type proc "c" (
+    world: ^World,
+    table: ^Table,
+    group_id: Id,
+    ctx: rawptr,
+) -> u64
+
+Group_Create_Action :: #type proc "c" (
+    world: ^World,
+    group_id: u64,
+    group_by_ctx: rawptr,
+) -> rawptr
+
+Group_Delete_Action :: #type proc "c" (
+    world: ^World,
+    group_id: u64,
+    group_ctx: rawptr,
+    group_by_ctx: rawptr,
+)
+
+Module_Action :: #type proc "c" (world: ^World)
+
+Fini_Action :: #type proc "c" (world: ^World, ctx: rawptr)
+
+Ctx_Free :: #type proc "c" (ctx: rawptr)
+
+Compare_Action :: #type proc "c" (ptr1: rawptr, ptr2: rawptr) -> c.int
+
+Hash_Value_Action :: #type proc "c" (ptr: rawptr) -> u64
+
+Xtor :: #type proc "c" (ptr: rawptr, count: i32, type_info: ^Type_Info)
+
+Copy :: #type proc "c" (
+    dst_ptr: rawptr,
+    src_ptr: rawptr,
+    count: i32,
+    type_info: ^Type_Info,
+)
+
+Move :: #type proc "c" (
+    dst_ptr: rawptr,
+    src_ptr: rawptr,
+    count: i32,
+    type_info: ^Type_Info,
+)
+
+Poly_Dtor :: #type proc "c" (poly: Poly)
+
+Iterable :: struct
+{
+    init: Iter_Init_Action,
+}
+
+InOut_Kind :: enum
+{
+    InOut_Default,
+    InOut_None,
+    InOut,
+    In,
+    Out,
+}
+
+Oper_Kind :: enum
+{
+    And,
+    Or,
+    Not,
+    Optional,
+    And_From,
+    Or_From,
+    Not_From,
+}
+
+Term_Id_Flags :: enum u32
+{
+    Self = 1 << 1,
+    Up = 1 << 2,
+    Down = 1 << 3,
+    Traverse_All = 1 << 4,
+    Cascade = 1 << 5,
+    Parent = 1 << 6,
+    Is_Variable = 1 << 7,
+    Is_Entity = 1 << 8,
+    Is_Name = 1 << 9,
+    Filter = 1 << 10,
+    Traverse_Flags = (Up|Down|Traverse_All|Self|Cascade|Parent),
+}
+
+Term_Flags :: enum
+{
+    Match_Any = 1 << 0,
+    Match_Any_Src = 1 << 1,
+    Src_First_Eq = 1 << 2,
+    Src_Second_Eq = 1 << 3,
+    Transitive = 1 << 4,
+    Reflexive = 1 << 5,
+    Id_Inherited = 1 << 6,
+}
+
+Term_Id :: struct
+{
+    id: Entity,
+    name: cstring,
+    trav: Entity,
+    flags: Flags32,
+}
+
+// Term already defined
+
+FILTER_INIT : Filter : {hdr = {magic = 0x65637366}}
+
+// Filter already defined
+
+// Observer already defined
+
+// Type_Hooks already defined
+
+// Type_Info already defined
+
+Entity_Desc :: struct
+{
+    _canary: i32,
+    id: Entity,
+    name: cstring,
+    sep: cstring,
+    root_sep: cstring,
+    symbol: cstring,
+    use_low_id: c.bool,
+    add: [ID_CACHE_SIZE]Id,
+    add_expr: cstring,
+}
+
+Bulk_Desc :: struct
+{
+    _canary: i32,
+    entities: [^]Entity,
+    count: i32,
+    ids: [ID_CACHE_SIZE]Id,
+    data: [^]rawptr,
+    table: ^Table,
+}
+
+Component_Desc :: struct
+{
+    _canary: i32,
+    entity: Entity,
+    type_: Type_Info,
+}
+
+Filter_Desc :: struct
+{
+    _canary: i32,
+    terms: [TERM_DESC_CACHE_SIZE]Term,
+    terms_buffer: [^]Term,
+    terms_buffer_count: i32,
+    storage: ^Filter,
+    instanced: c.bool,
+    flags: Flags32,
+    expr: cstring,
+    entity: Entity,
+}
+
+Query_Desc :: struct
+{
+    _canary: i32,
+    filter: Filter_Desc,
+    order_by_component: Entity,
+    order_by: Order_By_Action,
+    sort_table: Sort_Table_Action,
+    group_by_id: Id,
+    group_by: Group_By_Action,
+    on_group_create: Group_Create_Action,
+    on_group_delete: Group_Delete_Action,
+    group_by_ctx: rawptr,
+    group_by_ctx_free: Ctx_Free,
+    parent: ^Query,
+}
+
+Observer_Desc :: struct
+{
+    _canary: i32,
+    entity: Entity,
+    filter: Filter_Desc,
+    events: [OBSERVER_DESC_EVENT_COUNT_MAX]Entity,
+    yield_existing: c.bool,
+    callback: Iter_Action,
+    run: Run_Action,
+    ctx: rawptr,
+    binding_ctx: rawptr,
+    ctx_free: Ctx_Free,
+    binding_ctx_free: Ctx_Free,
+    observable: Poly,
+    last_event_id: ^i32,
+    term_index: i32,
+}
+
+Value :: struct
+{
+    type_: Entity,
+    ptr: rawptr,
+}
+
+World_Info :: struct
+{
+    last_component_id: Entity,
+    last_id: Entity,
+    min_id: Entity,
+    max_id: Entity,
+
+    delta_time_raw: FTime,
+    delta_time: FTime,
+    time_scale: FTime,
+    target_fps: FTime,
+    frame_time_total: FTime,
+    system_time_total: FTime,
+    emit_time_total: FTime,
+    merge_time_total: FTime,
+    world_time_total: FTime,
+    world_time_total_raw: FTime,
+    rematch_time_total: FTime,
+
+    frame_count_total: i64,
+    merge_count_total: i64,
+    rematch_count_total: i64,
+
+    id_create_total: i64,
+    id_delete_total: i64,
+    table_create_total: i64,
+    table_delete_total: i64,
+    pipeline_build_count_total: i64,
+    systems_ran_frame: i64,
+    observers_ran_frame: i64,
+
+    id_count: i32,
+    tag_id_count: i32,
+    component_id_count: i32,
+    pair_id_count: i32,
+    wildcard_id_count: i32,
+
+    table_count: i32,
+    tag_table_count: i32,
+    trivial_table_count: i32,
+    empty_table_count: i32,
+    table_record_count: i32,
+    table_storage_count: i32,
+
+    cmd: struct {
+        add_count: i64,
+        remove_count: i64,
+        delete_count: i64,
+        clear_count: i64,
+        set_count: i64,
+        get_mut_count: i64,
+        modified_count: i64,
+        other_count: i64,
+        discard_count: i64,
+        batched_entity_count: i64,
+        batched_command_count: i64,
+    },
+
+    name_prefix: cstring,
+}
+
+Query_Group_Info :: struct
+{
+    match_count: i32,
+    table_count: i32,
+    ctx: rawptr,
+}
+
+/// Builtin components
+
+Ecs_Identifier :: struct
+{
+    value: cstring,
+    length: Size,
+    hash: u64,
+    index_hash: u64,
+    index: ^HashMap,
+}
+
+Ecs_Component :: struct
+{
+    size: Size,
+    alignment: Size,
+}
+
+Ecs_Poly :: struct
+{
+    poly: Poly,
+}
+
+Ecs_Target :: struct
+{
+    count: i32,
+    target: ^Record,
+}
+
+Ecs_Iterable :: Iterable
+
+/// Builtin component IDs
+
+// TODO: Remove this code if the defs in procs.odin work, uncomment otherwise
+Ecs_Component_Id : Entity : 1
+Ecs_Identifier_Id : Entity : 2
+Ecs_Iterable_Id : Entity : 3
+Ecs_Poly_Id : Entity : 4
+
+/// System module component IDs
+
+//Ecs_System : Entity : 7
+Ecs_Tick_Source_Id : Entity : HI_COMPONENT_ID + 47
+
+/// Pipeline module component IDs
+
+// ecs_id(EcsPipelineQuery) has no definition so...
+
+/// Timer module component IDs
+
+Ecs_Timer_Id : Entity : HI_COMPONENT_ID + 48
+Ecs_Rate_Filter_Id : Entity : HI_COMPONENT_ID + 49
+
+/// More builtin entities that I will not individually comment :P
+
+Ecs_Flecs : Entity : HI_COMPONENT_ID + 1
+Ecs_Flecs_Core : Entity : HI_COMPONENT_ID + 2
+Ecs_World : Entity : HI_COMPONENT_ID + 0
+Ecs_Wildcard : Entity : HI_COMPONENT_ID + 10
+Ecs_Any : Entity : HI_COMPONENT_ID + 11
+Ecs_This : Entity : HI_COMPONENT_ID + 12
+Ecs_Variable : Entity : HI_COMPONENT_ID + 13
+Ecs_Transitive : Entity : HI_COMPONENT_ID + 14
+Ecs_Reflexive : Entity : HI_COMPONENT_ID + 15
+Ecs_Final : Entity : HI_COMPONENT_ID + 17
+Ecs_Dont_Inherit : Entity : HI_COMPONENT_ID + 18
+Ecs_Always_Override : Entity : HI_COMPONENT_ID + 19
+Ecs_Symmetric : Entity : HI_COMPONENT_ID + 16
+Ecs_Exclusive : Entity : HI_COMPONENT_ID + 22
+Ecs_Acyclic : Entity : HI_COMPONENT_ID + 23
+Ecs_Traversable : Entity : HI_COMPONENT_ID + 24
+Ecs_With : Entity : HI_COMPONENT_ID + 25
+Ecs_One_Of : Entity : HI_COMPONENT_ID + 26
+Ecs_Tag : Entity : HI_COMPONENT_ID + 20
+Ecs_Union : Entity : HI_COMPONENT_ID + 21
+
+Ecs_Name : Entity : HI_COMPONENT_ID + 30
+Ecs_Symbol : Entity : HI_COMPONENT_ID + 31
+Ecs_Alias : Entity : HI_COMPONENT_ID + 32
+
+Ecs_Child_Of : Entity : HI_COMPONENT_ID + 27
+Ecs_Is_A : Entity : HI_COMPONENT_ID + 28
+Ecs_Depends_On : Entity : HI_COMPONENT_ID + 29
+
+Ecs_Slot_Of : Entity : HI_COMPONENT_ID + 8
+
+Ecs_Module : Entity : HI_COMPONENT_ID + 4
+Ecs_Private : Entity : HI_COMPONENT_ID + 5
+Ecs_Prefab : Entity : HI_COMPONENT_ID + 6
+Ecs_Disabled : Entity : HI_COMPONENT_ID + 7
+
+Ecs_On_Add : Entity : HI_COMPONENT_ID + 33
+Ecs_On_Remove : Entity : HI_COMPONENT_ID + 34
+Ecs_On_Set : Entity : HI_COMPONENT_ID + 35
+Ecs_Un_Set : Entity : HI_COMPONENT_ID + 36
+
+Ecs_Monitor : Entity : HI_COMPONENT_ID + 61
+
+Ecs_On_Delete : Entity : HI_COMPONENT_ID + 37
+Ecs_On_Table_Create : Entity : HI_COMPONENT_ID + 38
+Ecs_On_Table_Delete : Entity : HI_COMPONENT_ID + 39
+Ecs_On_Table_Empty : Entity : HI_COMPONENT_ID + 40
+Ecs_On_Table_Fill : Entity : HI_COMPONENT_ID + 41
+Ecs_On_Delete_Target : Entity : HI_COMPONENT_ID + 46
+
+Ecs_Remove : Entity : HI_COMPONENT_ID + 50
+Ecs_Delete : Entity : HI_COMPONENT_ID + 51
+Ecs_Panic : Entity : HI_COMPONENT_ID + 52
+
+Ecs_Target_Id : Entity : HI_COMPONENT_ID + 53
+Ecs_Flatten : Entity : HI_COMPONENT_ID + 54
+Ecs_Default_Child_Component : Entity : HI_COMPONENT_ID + 55
+
+Ecs_Pred_Eq : Entity : HI_COMPONENT_ID + 56
+Ecs_Pred_Match : Entity : HI_COMPONENT_ID + 57
+Ecs_Pred_Lookup : Entity : HI_COMPONENT_ID + 58
+
+Ecs_Empty : Entity : HI_COMPONENT_ID + 62
+Ecs_Pipeline_Id : Entity : HI_COMPONENT_ID + 63
+Ecs_On_Start : Entity : HI_COMPONENT_ID + 64
+Ecs_Pre_Frame : Entity : HI_COMPONENT_ID + 65
+Ecs_On_Load : Entity : HI_COMPONENT_ID + 66
+Ecs_Post_Load : Entity : HI_COMPONENT_ID + 67
+Ecs_Pre_Update : Entity : HI_COMPONENT_ID + 68
+Ecs_On_Update : Entity : HI_COMPONENT_ID + 69
+Ecs_On_Validate : Entity : HI_COMPONENT_ID + 70
+Ecs_Post_Update : Entity : HI_COMPONENT_ID + 71
+Ecs_Pre_Store : Entity : HI_COMPONENT_ID + 72
+Ecs_On_Store : Entity : HI_COMPONENT_ID + 73
+Ecs_Post_Frame : Entity : HI_COMPONENT_ID + 74
+Ecs_Phase : Entity : HI_COMPONENT_ID + 75
+
+Ecs_Last_Internal_Component_Id :: Ecs_Poly_Id
+
+Ecs_First_User_Component_Id :: 8
+
+Ecs_First_User_Entity_Id :: HI_COMPONENT_ID + 128
+
+Flatten_Desc :: struct
+{
+    keep_names: c.bool,
+    lose_depth: c.bool,
+}
+
+Event_Desc :: struct
+{
+    event: Entity,
+    ids: ^Type,
+    table: ^Table,
+    other_table: ^Table,
+    offset: i32,
+    count: i32,
+    entity: Entity,
+    param: rawptr,
+    observable: Poly,
+    flags: Flags32,
+}

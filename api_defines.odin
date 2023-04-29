@@ -121,12 +121,12 @@ Pair_Object :: Pair_Second
 
 Poly_Id :: proc(world: ^World, tag: Entity) -> u64
 {
-    return Pair(id(world, EcsPoly), tag)
+    return Pair(id(world, Ecs_Poly), tag)
 }
 
 
 /// Actions that drive iteration
-Iter_Action :: enum
+Iter_Actions :: enum
 {
     NextYield = 0, // Move onto next table, yield current
     Yield = -1, // Stay on current table, yield
