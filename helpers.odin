@@ -4,6 +4,7 @@ import "core:c"
 import "core:reflect"
 import "core:strings"
 import "core:runtime"
+import "core:fmt"
 
 @(private)
 _Get_Type_Name :: proc($T: typeid) -> string

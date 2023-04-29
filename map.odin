@@ -45,12 +45,12 @@ Map_Params :: struct
 
 map_count :: proc(map_: Map) -> i32
 {
-    return ((map_) ? (map_)->count : 0)
+    return map_.count
 }
 
 map_is_init :: proc(map_: Map) -> bool
 {
-    return ((map_) ? (map_)->bucket_shift != 0 : false)
+    return (map_).bucket_shift != 0
 }
 
 map_get_ref :: proc(m: ^Map, $T: typeid, k: Map_Key) -> [^]T
@@ -68,7 +68,7 @@ map_ensure_ref :: proc(m: ^Map, $T: typeid, k: Map_Key) -> [^]T
     return cast([^]T)map_ensure(m, k)
 }
 
-map_insert_ptr :: proc(m: ^Map, k: Map_Key, v: any)
+map_insert_ptr :: proc(m: ^Map, k: Map_Key, v: int)
 {
     map_insert(m, k, cast(Map_Val)v)
 }
@@ -83,25 +83,31 @@ map_ensure_alloc_t :: proc(m: ^Map, $T: typeid, k: Map_Key) -> ^T
     return cast(^T)map_ensure_alloc(m, size_of(T), k)
 }
 
+// TODO: Fix this
+/*
 map_remove_ptr :: proc(m: ^Map, k: Map_Key) -> rawptr
 {
     return cast(rawptr)map_remove(m, k)
 }
+*/
 
 map_key :: proc(it: ^Map_Iter) -> Map_Data
 {
-    return it->res[0]
+    return it.res[0]
 }
 
 map_value :: proc(it: ^Map_Iter) -> Map_Data
 {
-    return it->res[1]
+    return it.res[1]
 }
 
+// TODO: Fix this
+/*
 map_ptr :: proc(it: ^Map_Iter) -> rawptr
 {
     return cast(rawptr)map_value(it)
 }
+*/
 
 map_ref :: proc(it: ^Map_Iter, $T: typeid) -> [^]T
 {

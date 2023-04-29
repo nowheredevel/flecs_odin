@@ -1,6 +1,7 @@
 package flecs
 
 import "core:c"
+import "core:strings"
 
 Flags8 :: u8
 Flags16 :: u16
@@ -52,9 +53,9 @@ COMPONENT_MASK :: ~ID_FLAGS_MASK
 
 // Ignore HAS_ID_FLAG for now, as it uses token pasting
 
-IS_PAIR :: proc(id: u64) -> u64
+IS_PAIR :: proc(id: u64) -> bool
 {
-    return ((id) & ID_FLAGS_MASK) == PAIR
+    return ((id) & ID_FLAGS_MASK) == ECS_PAIR
 }
 
 PAIR_FIRST :: proc(E: Entity) -> u32
@@ -71,8 +72,8 @@ PAIR_SECOND :: proc(E: Entity) -> u32
 
 id :: proc(world: ^World, $T: typeid) -> Entity
 {
-    edesc: EntityDesc
-    name_c := strings.clone_to_cstring(_GetTypeName(T))
+    edesc: Entity_Desc
+    name_c := strings.clone_to_cstring(_Get_Type_Name(T))
     edesc.name = name_c
     edesc.symbol = name_c
     return entity_init(world, &edesc)
@@ -84,36 +85,36 @@ id :: proc(world: ^World, $T: typeid) -> Entity
 /// Utilities for working with pair identifiers
 // TODO: Replace generics with entities
 
-Entity_Lo :: proc(value: Entity) -> u64
+Entity_Lo :: proc(value: Entity) -> u32
 {
     return cast(u32)value
 }
 
-Entity_Hi :: proc(value: Entity) -> u64
+Entity_Hi :: proc(value: Entity) -> u32
 {
     return cast(u32)(value >> 32)
 }
 
 Entity_Comb :: proc(lo: Entity, hi: Entity) -> u64
 {
-    return (((cast(u64)hi) << 32) + cast(u32)lo)
+    return (((cast(u64)hi) << 32) + cast(u64)lo)
 }
 
 Pair :: proc(pred: Entity, obj: Entity) -> u64
 {
-    return PAIR | Entity_Comb(obj, pred)
+    return ECS_PAIR | Entity_Comb(obj, pred)
 }
 
 // Ignore ecs_pair_t
 
 Pair_First :: proc(world: ^World, pair: Entity) -> u64
 {
-    return get_alive(world, PAIR_FIRST(pair))
+    return get_alive(world, cast(u64)PAIR_FIRST(pair))
 }
 
 Pair_Second :: proc(world: ^World, pair: Entity) -> u64
 {
-    return get_alive(world, PAIR_SECOND(pair))
+    return get_alive(world, cast(u64)PAIR_SECOND(pair))
 }
 
 Pair_Relation :: Pair_First

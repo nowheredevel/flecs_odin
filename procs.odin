@@ -472,7 +472,7 @@ foreign flecs
         table: ^Table,
         offset: i32,
         id: Id,
-        rel: Entity = nil,
+        rel: Entity,
         flags: Flags32,
         subject_out: ^Entity,
         id_out: ^Id = nil,
@@ -567,4 +567,6 @@ foreign flecs
     EcsObserver: Entity
 
     EcsSystem: Entity
+    EcsFlag: Entity
+    EcsFlecsInternals: Entity
 }
