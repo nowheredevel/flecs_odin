@@ -610,6 +610,90 @@ foreign flecs
     http_server_ctx :: proc(srv: ^HTTP_Server) -> rawptr ---
     http_get_header :: proc(req: ^HTTP_Request, name: cstring) -> cstring ---
     http_get_param :: proc(req: ^HTTP_Request, name: cstring) -> cstring ---
+
+    // JSON
+    ptr_from_json :: proc(
+        world: ^World,
+        type_: Entity,
+        ptr: rawptr,
+        json: cstring,
+        desc: ^From_JSON_Desc,
+    ) -> cstring ---
+    entity_from_json :: proc(
+        world: ^World,
+        entity: Entity,
+        json: cstring,
+        desc: ^From_JSON_Desc,
+    ) -> cstring ---
+    world_from_json :: proc(
+        world: ^World,
+        json: cstring,
+        desc: ^From_JSON_Desc,
+    ) -> cstring ---
+    array_to_json :: proc(
+        world: ^World,
+        type_: Entity,
+        data: rawptr,
+        count: i32,
+    ) -> cstring ---
+    array_to_json_buf :: proc(
+        world: ^World,
+        type_: Entity,
+        data: rawptr,
+        count: i32,
+        buf_out: ^StrBuf,
+    ) -> c.int ---
+    ptr_to_json :: proc(
+        world: ^World,
+        type_: Entity,
+        data: rawptr,
+    ) -> cstring ---
+    ptr_to_json_buf :: proc(
+        world: ^World,
+        type_: Entity,
+        data: rawptr,
+        buf_out: ^StrBuf,
+    ) -> c.int ---
+    type_info_to_json :: proc(
+        world: ^World,
+        type_: Entity,
+    ) -> cstring ---
+    type_info_to_json_buf :: proc(
+        world: ^World,
+        type_: Entity,
+        buf_out: ^StrBuf,
+    ) -> c.int ---
+    entity_to_json :: proc(
+        world: ^World,
+        entity: Entity,
+        desc: ^Entity_To_JSON_Desc,
+    ) -> cstring ---
+    entity_to_json_buf :: proc(
+        world: ^World,
+        entity: Entity,
+        buf_out: ^StrBuf,
+        desc: ^Entity_To_JSON_Desc,
+    ) -> c.int ---
+    iter_to_json :: proc(
+        world: ^World,
+        iter: ^Iter,
+        desc: ^Iter_To_JSON_Desc,
+    ) -> cstring ---
+    iter_to_json_buf :: proc(
+        world: ^World,
+        iter: ^Iter,
+        buf_out: ^StrBuf,
+        desc: ^Iter_To_JSON_Desc,
+    ) -> c.int ---
+    world_to_json :: proc(
+        world: ^World,
+        desc: ^World_To_JSON_Desc,
+    ) -> cstring ---
+    world_to_json_buf :: proc(
+        world: ^World,
+        buf_out: ^StrBuf,
+        desc: ^World_To_JSON_Desc,
+    ) -> c.int ---
 }
 
 // Flecs functions
