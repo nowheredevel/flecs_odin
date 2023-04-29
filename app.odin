@@ -15,3 +15,7 @@ App_Desc :: struct
     init: App_Init_Action,
     ctx: rawptr,
 }
+
+App_Run_Action :: #type proc "c" (world: ^World, desc: ^App_Desc) -> c.int
+App_Frame_Action :: #type proc "c" (world: ^World, desc: ^App_Desc) -> c.int
+

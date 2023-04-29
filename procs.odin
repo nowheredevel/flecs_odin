@@ -523,6 +523,24 @@ foreign flecs
         dst: rawptr,
         src: rawptr,
     ) -> c.int ---
+
+    // App
+    app_run :: proc(world: ^World, desc: ^App_Desc) -> c.int ---
+    app_run_frame :: proc(world: ^World, desc: ^App_Desc) -> c.int ---
+    app_set_run_action :: proc(callback: App_Run_Action) -> c.int ---
+    app_set_frame_action :: proc(callback: App_Frame_Action) -> c.int ---
+
+    // Doc
+    doc_set_name :: proc(world: ^World, entity: Entity, name: cstring) ---
+    doc_set_brief :: proc(world: ^World, entity: Entity, desc: cstring) ---
+    doc_set_detail :: proc(world: ^World, entity: Entity, desc: cstring) ---
+    doc_set_link :: proc(world: ^World, entity: Entity, link: cstring) ---
+    doc_set_color :: proc(world: ^World, entity: Entity, color: cstring) ---
+    doc_get_name :: proc(world: ^World, entity: Entity) -> cstring ---
+    doc_get_brief :: proc(world: ^World, entity: Entity) -> cstring ---
+    doc_get_detail :: proc(world: ^World, entity: Entity) -> cstring ---
+    doc_get_link :: proc(world: ^World, entity: Entity) -> cstring ---
+    doc_get_color :: proc(world: ^World, entity: Entity) -> cstring ---
 }
 
 // Flecs functions
@@ -569,4 +587,17 @@ foreign flecs
     EcsSystem: Entity
     EcsFlag: Entity
     EcsFlecsInternals: Entity
+
+    // Doc entities
+    DocBrief: Entity
+    DocDetail: Entity
+    DocLink: Entity
+    DocColor: Entity
+}
+
+/// Module imports
+@(default_calling_convention = "c", link_prefix = "Flecs")
+foreign flecs
+{
+    DocImport :: proc(world: ^World) ---
 }
