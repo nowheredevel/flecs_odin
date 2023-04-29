@@ -252,14 +252,14 @@ Iter_Cache :: struct
 
 Iter_Private :: struct
 {
-    iter: union {
-        Term_Iter,
-        Filter_Iter,
-        Query_Iter,
-        Rule_Iter,
-        Snapshot_Iter,
-        Page_Iter,
-        Worker_Iter,
+    iter: struct #raw_union {
+        term: Term_Iter,
+        filter: Filter_Iter,
+        query: Query_Iter,
+        rule: Rule_Iter,
+        snapshot: Snapshot_Iter,
+        page: Page_Iter,
+        worker: Worker_Iter,
     },
 
     entity_iter: rawptr,

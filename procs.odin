@@ -541,6 +541,75 @@ foreign flecs
     doc_get_detail :: proc(world: ^World, entity: Entity) -> cstring ---
     doc_get_link :: proc(world: ^World, entity: Entity) -> cstring ---
     doc_get_color :: proc(world: ^World, entity: Entity) -> cstring ---
+
+    // Expr
+    chresc :: proc(out: cstring, in_: c.char, delimiter: c.char) -> cstring ---
+    stresc :: proc(out: cstring, size: Size, delimiter: c.char, in_: cstring) -> Size ---
+    astresc :: proc(delimiter: c.char, in_: cstring) -> cstring ---
+    vars_init :: proc(world: ^World, vars: ^Vars) ---
+    vars_fini :: proc(vars: ^Vars) ---
+    vars_push :: proc(vars: ^Vars) ---
+    vars_pop :: proc(vars: ^Vars) -> c.int ---
+    vars_declare :: proc(vars: ^Vars, name: cstring, type_: Entity) -> ^Expr_Var ---
+    vars_declare_w_value :: proc(vars: ^Vars, name: cstring, value: ^Value) -> ^Expr_Var ---
+    vars_lookup :: proc(vars: ^Vars, name: cstring) -> ^Expr_Var ---
+    parse_expr :: proc(
+        world: ^World, 
+        ptr: cstring, 
+        value: ^Value, 
+        desc: ^Parse_Expr_Desc,
+    ) -> cstring ---
+    ptr_to_expr :: proc(world: ^World, type_: Entity, data: rawptr) -> cstring ---
+    ptr_to_expr_buf :: proc(
+        world: ^World, 
+        type_: Entity, 
+        data: rawptr, 
+        buf: ^StrBuf,
+    ) -> c.int ---
+    primitive_to_expr_buf :: proc(
+        world: ^World,
+        kind: Primitive_Kind,
+        data: rawptr,
+        buf: ^StrBuf,
+    ) -> c.int ---
+    parse_expr_token :: proc(
+        name: cstring,
+        expr: cstring,
+        ptr: cstring,
+        token: cstring,
+    ) -> cstring ---
+
+    // HTTP
+    http_request_received_count: i64
+    http_request_invalid_count: i64
+    http_request_handled_ok_count: i64
+    http_request_handled_error_count: i64
+    http_request_not_handled_count: i64
+    http_request_preflight_count: i64
+    http_send_ok_count: i64
+    http_send_error_count: i64
+    http_busy_count: i64
+
+    http_server_init :: proc(desc: ^HTTP_Server_Desc) -> ^HTTP_Server ---
+    http_server_fini :: proc(server: ^HTTP_Server) ---
+    http_server_start :: proc(server: ^HTTP_Server) -> c.int ---
+    http_server_dequeue :: proc(server: ^HTTP_Server, delta_time: FTime) ---
+    http_server_stop :: proc(server: ^HTTP_Server) ---
+    http_server_http_request :: proc(
+        srv: ^HTTP_Server,
+        req: cstring,
+        len: Size,
+        reply_out: ^HTTP_Reply,
+    ) -> c.int ---
+    http_server_request :: proc(
+        srv: ^HTTP_Server,
+        method: cstring,
+        req: cstring,
+        reply_out: ^HTTP_Reply,
+    ) -> c.int ---
+    http_server_ctx :: proc(srv: ^HTTP_Server) -> rawptr ---
+    http_get_header :: proc(req: ^HTTP_Request, name: cstring) -> cstring ---
+    http_get_param :: proc(req: ^HTTP_Request, name: cstring) -> cstring ---
 }
 
 // Flecs functions

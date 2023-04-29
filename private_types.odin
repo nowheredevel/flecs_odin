@@ -298,9 +298,9 @@ Cmd :: struct
     idr: ^Id_Record,
     entity: Entity,
 
-    is: union {
-        Cmd_1,
-        Cmd_N,
+    is: struct #raw_union {
+        _1: Cmd_1,
+        _n: Cmd_N,
     },
 }
 
