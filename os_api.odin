@@ -1,6 +1,8 @@
 package flecs
 
 import "core:c"
+import "core:c/libc"
+import "core:mem"
 
 Time :: struct
 {
@@ -165,27 +167,338 @@ OS_API :: struct
     flags_: Flags32,
 }
 
-when ODIN_OS != .WASI && ODIN_OS != .JS
-{
-    Global_OS_API :: OS_API {
-        flags_ = cast(u32)OS_API_Flags.High_Resolution_Timer | cast(u32)OS_API_Flags.Log_With_Colors,
-        log_level_ = -1, // Disable tracing by default, but log warnings/errors
-    }
-} else
-{
-    // Disable colors by default for emscripten
-    Global_OS_API :: OS_API {
-        flags_ = cast(u32)OS_API_Flags.High_Resolution_Timer,
-        log_level_ = -1,
-    }
-}
-
-OS_Malloc :: proc(size: Size) -> rawptr
+os_malloc :: proc(size: Size) -> rawptr
 {
     return Global_OS_API.malloc_(size)
 }
 
-OS_Free :: proc(ptr: rawptr)
+os_free :: proc(ptr: rawptr)
 {
     Global_OS_API.free_(ptr)
+}
+
+os_realloc :: proc(ptr: rawptr, size: Size) -> rawptr
+{
+    return Global_OS_API.realloc_(ptr, size)
+}
+
+os_calloc :: proc(size: Size) -> rawptr
+{
+    return Global_OS_API.calloc_(size)
+}
+
+os_alloca :: proc(size: Size) -> rawptr
+{
+    return mem.alloc(cast(int)size)
+}
+
+os_malloc_t :: proc($T: typeid) -> ^T
+{
+    return cast(^T)os_malloc(size_of(T))
+}
+
+os_malloc_n :: proc($T: typeid, count: Size) -> [^]T
+{
+    return cast([^]T)os_malloc(size_of(T) * count)
+}
+
+os_calloc_t :: proc($T: typeid) -> ^T
+{
+    return cast(^T)os_calloc(size_of(T))
+}
+
+os_calloc_n :: proc($T: typeid, count: Size) -> [^]T
+{
+    return cast([^]T)os_calloc(size_of(T) * count)
+}
+
+os_realloc_t :: proc(ptr: rawptr, $T: typeid) -> ^T
+{
+    return cast(^T)os_realloc(ptr, size_of(T))
+}
+
+os_realloc_n :: proc(ptr: rawptr, $T: typeid, count: Size) -> [^]T
+{
+    return cast([^]T)os_realloc(ptr, size_of(T) * count)
+}
+
+os_alloca_t :: proc($T: typeid) -> ^T
+{
+    return cast(^T)os_alloca(size_of(T))
+}
+
+os_alloca_n :: proc($T: typeid, count: i32) -> [^]T
+{
+    return cast([^]T)os_alloca(size_of(T) * count)
+}
+
+os_strdup :: proc(str: cstring) -> cstring
+{
+    return Global_OS_API.strdup_(str)
+}
+
+os_strlen :: proc(str: cstring) -> uint
+{
+    return libc.strlen(str)
+}
+
+os_strncmp :: proc(str1: cstring, str2: cstring, num: uint) -> c.int
+{
+    return libc.strncmp(str1, str2, num)
+}
+
+os_memcmp :: proc(ptr1: rawptr, ptr2: rawptr, num: uint) -> c.int
+{
+    return libc.memcmp(ptr1, ptr1, num)
+}
+
+os_memcpy :: proc(ptr1: rawptr, ptr2: rawptr, num: uint) -> rawptr
+{
+    return libc.memcpy(ptr1, ptr2, num)
+}
+
+os_memset :: proc(ptr: rawptr, value: c.int, num: uint) -> rawptr
+{
+    return libc.memset(ptr, value, num)
+}
+
+os_memmove :: proc(dst: rawptr, src: rawptr, size: uint) -> rawptr
+{
+    return libc.memmove(dst, src, size)
+}
+
+os_memcpy_t :: proc(ptr1: rawptr, ptr2: rawptr, $T: typeid) -> rawptr
+{
+    return os_memcpy(ptr1, ptr2, size_of(T))
+}
+
+os_memcpy_n :: proc(ptr1: rawptr, ptr2: rawptr, $T: typeid, count: i32) -> rawptr
+{
+    return os_memcpy(ptr1, ptr2, size_of(T) * count)
+}
+
+os_memcmp_t :: proc(ptr1: rawptr, ptr2: rawptr, $T: typeid) -> c.int
+{
+    return os_memcmp(ptr1, ptr2, size_of(T))
+}
+
+os_strcmp :: proc(str1: cstring, str2: cstring) -> c.int
+{
+    return libc.strcmp(str1, str2)
+}
+
+os_memset_t :: proc(ptr: rawptr, value: c.int, $T: typeid) -> rawptr
+{
+    return os_memset(ptr, value, size_of(T))
+}
+
+os_memset_n :: proc(ptr: rawptr, value: c.int, $T: typeid, count: i32) -> rawptr
+{
+    return os_memset(ptr, value, size_of(T) * count)
+}
+
+os_zeromem :: proc(ptr: rawptr) -> rawptr
+{
+    return os_memset(ptr, 0, size_of(ptr))
+}
+
+os_memdup_t :: proc(ptr: rawptr, $T: typeid) -> rawptr
+{
+    return os_memdup(ptr, size_of(T))
+}
+
+os_memdup_n :: proc(ptr: rawptr, $T: typeid, count: i32) -> rawptr
+{
+    return os_memdup(ptr, size_of(T) * count)
+}
+
+offset :: proc(ptr: rawptr, $T: typeid, index: i32) -> ^T
+{
+    return cast(^T)offset_of(ptr, size_of(T) * index)
+}
+
+os_strcat :: proc(str1: [^]c.char, str2: cstring) -> [^]c.char
+{
+    return libc.strcat(str1, str2)
+}
+
+os_sprintf :: proc(ptr: [^]c.char, format: cstring, args: ..any) -> c.int
+{
+    return libc.snprintf(ptr, format, args)
+}
+
+os_vsprintf :: proc(ptr: [^]c.char, fmt: cstring, args: ^libc.va_list) -> c.int
+{
+    return libc.vsprintf(ptr, fmt, args)
+}
+
+os_strcpy :: proc(str1: [^]c.char, str2: cstring) -> [^]c.char
+{
+    return libc.strcpy(str1, str2)
+}
+
+os_strncpy :: proc(str1: [^]c.char, str2: cstring, num: uint) -> [^]c.char
+{
+    return libc.strncpy(str1, str2, num)
+}
+
+os_fopen :: proc(result: ^libc.FILE, file: cstring, mode: cstring)
+{
+    result := result
+    result = libc.fopen(file, mode)
+}
+
+/// Threads
+
+os_thread_new :: proc(callback: OS_Thread_Callback, param: rawptr) -> OS_Thread
+{
+    return Global_OS_API.thread_new_(callback, param)
+}
+
+os_thread_join :: proc(thread: OS_Thread) -> rawptr
+{
+    return Global_OS_API.thread_join_(thread)
+}
+
+os_thread_self :: proc() -> OS_Thread_Id
+{
+    return Global_OS_API.thread_self_()
+}
+
+/// Atomic increment/decrement
+
+os_ainc :: proc(value: ^i32) -> i32
+{
+    return Global_OS_API.ainc_(value)
+}
+
+os_adec :: proc(value: ^i32) -> i32
+{
+    return Global_OS_API.adec_(value)
+}
+
+os_lainc :: proc(value: ^i64) -> i64
+{
+    return Global_OS_API.lainc_(value)
+}
+
+os_ladec :: proc(value: ^i64) -> i64
+{
+    return Global_OS_API.ladec_(value)
+}
+
+/// Mutex
+
+os_mutex_new :: proc() -> OS_Mutex
+{
+    return Global_OS_API.mutex_new_()
+}
+
+os_mutex_free :: proc(mutex: OS_Mutex)
+{
+    Global_OS_API.mutex_free_(mutex)
+}
+
+os_mutex_lock :: proc(mutex: OS_Mutex)
+{
+    Global_OS_API.mutex_lock_(mutex)
+}
+
+os_mutex_unlock :: proc(mutex: OS_Mutex)
+{
+    Global_OS_API.mutex_unlock_(mutex)
+}
+
+/// Condition variable
+
+os_cond_new :: proc() -> OS_Cond
+{
+    return Global_OS_API.cond_new_()
+}
+
+os_cond_free :: proc(cond: OS_Cond)
+{
+    Global_OS_API.cond_free_(cond)
+}
+
+os_cond_signal :: proc(cond: OS_Cond)
+{
+    Global_OS_API.cond_signal_(cond)
+}
+
+os_cond_broadcast :: proc(cond: OS_Cond)
+{
+    Global_OS_API.cond_broadcast_(cond)
+}
+
+os_cond_wait :: proc(cond: OS_Cond, mutex: OS_Mutex)
+{
+    Global_OS_API.cond_wait_(cond, mutex)
+}
+
+/// Time
+
+os_sleep :: proc(sec: i32, nanosec: i32)
+{
+    Global_OS_API.sleep_(sec, nanosec)
+}
+
+os_now :: proc() -> u64
+{
+    return Global_OS_API.now_()
+}
+
+os_get_time :: proc(time_out: ^Time)
+{
+    Global_OS_API.get_time_(time_out)
+}
+
+os_inc :: proc(v: ^i32) -> i32
+{
+    return os_ainc(v)
+}
+
+os_linc :: proc(v: ^i64) -> i64
+{
+    return os_lainc(v)
+}
+
+os_dec :: proc(v: ^i32) -> i32
+{
+    return os_adec(v)
+}
+
+os_ldec :: proc(v: ^i64) -> i64
+{
+    return os_ladec(v)
+}
+
+os_abort :: proc()
+{
+    Global_OS_API.abort_()
+}
+
+os_dlopen :: proc(libname: cstring) -> OS_DL
+{
+    return Global_OS_API.dlopen_(libname)
+}
+
+os_dlproc :: proc(lib: OS_DL, procname: cstring) -> OS_Proc
+{
+    return Global_OS_API.dlproc_(lib, procname)
+}
+
+os_dlclose :: proc(lib: OS_DL)
+{
+    Global_OS_API.dlclose_(lib)
+}
+
+os_module_to_dl :: proc(lib: cstring) -> cstring
+{
+    return Global_OS_API.module_to_dl_(lib)
+}
+
+os_module_to_etc :: proc(lib: cstring) -> cstring
+{
+    return Global_OS_API.module_to_etc_(lib)
 }

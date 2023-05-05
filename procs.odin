@@ -16,6 +16,69 @@ foreign flecs
 
     // Misc
     _poly_is :: proc(object: Poly, type_: i32) -> c.bool ---
+
+    // Log
+    _deprecated :: proc(file: cstring, line: i32, msg: cstring) ---
+    _log_push :: proc(level: i32) ---
+    _log_pop :: proc(level: i32) ---
+    _print :: proc(
+        level: i32,
+        file: cstring,
+        line: i32,
+        fmt: cstring,
+        #c_vararg _: ..any,
+    ) ---
+    _printv :: proc(
+        level: c.int,
+        file: cstring,
+        line: i32,
+        fmt: cstring,
+        args: cstring,
+    ) ---
+    _log :: proc(
+        level: i32,
+        file: cstring,
+        line: i32,
+        fmt: cstring,
+        #c_vararg _: ..any,
+    ) ---
+    _logv :: proc(
+        level: c.int,
+        file: cstring,
+        line: i32,
+        fmt: cstring,
+        args: cstring,
+    ) ---
+    _abort :: proc(
+        error_code: i32,
+        file: cstring,
+        line: i32,
+        fmt: cstring,
+        #c_vararg _: ..any,
+    ) ---
+    _assert :: proc(
+        condition: c.bool,
+        error_code: i32,
+        condition_str: cstring,
+        file: cstring,
+        line: i32,
+        fmt: cstring,
+        #c_vararg _: ..any,
+    ) -> c.bool ---
+    _parser_error :: proc(
+        name: cstring,
+        expr: cstring,
+        column: i64,
+        fmt: cstring,
+        #c_vararg _: ..any,
+    ) ---
+    _parser_errorv :: proc(
+        name: cstring,
+        expr: cstring,
+        column: i64,
+        fmt: cstring,
+        args: cstring,
+    ) ---
 }
 
 // Public functions
@@ -28,6 +91,24 @@ foreign flecs
     os_set_api :: proc(os_api: ^OS_API) ---
     os_get_api :: proc() -> OS_API ---
     os_set_api_defaults :: proc() ---
+    os_dbg :: proc(file: cstring, line: i32, message: cstring) ---
+    os_trace :: proc(file: cstring, line: i32, message: cstring) ---
+    os_warn :: proc(file: cstring, line: i32, message: cstring) ---
+    os_err :: proc(file: cstring, line: i32, message: cstring) ---
+    os_fatal :: proc(file: cstring, line: i32, message: cstring) ---
+    os_strerror :: proc(err: c.int) -> cstring ---
+    os_strset :: proc(str: [^]cstring, value: cstring) ---
+    sleepf :: proc(t: f64) ---
+    time_measure :: proc(start: ^Time) -> f64 ---
+    time_sub :: proc(t1: Time, t2: Time) -> Time ---
+    time_to_double :: proc(t: Time) -> f64 ---
+    os_memdup :: proc(src: rawptr, size: Size) -> rawptr ---
+    os_has_heap :: proc() -> c.bool ---
+    os_has_threading :: proc() -> c.bool ---
+    os_has_time :: proc() ->  c.bool ---
+    os_has_logging :: proc() -> c.bool ---
+    os_has_dl :: proc() -> c.bool ---
+    os_has_modules :: proc() -> c.bool ---
 
     // API Support
     module_path_from_c :: proc(c_name: cstring) -> cstring ---
@@ -694,6 +775,16 @@ foreign flecs
         buf_out: ^StrBuf,
         desc: ^World_To_JSON_Desc,
     ) -> c.int ---
+
+    // Log
+    should_log :: proc(level: i32) -> c.bool ---
+    strerror :: proc(error_code: i32) -> cstring ---
+    log_set_level :: proc(level: c.int) -> c.int ---
+    log_get_level :: proc() -> c.int ---
+    log_enable_colors :: proc(enabled: c.bool) -> c.bool ---
+    log_enable_timestamp :: proc(enabled: c.bool) -> c.bool ---
+    log_enable_timedelta :: proc(enabled: c.bool) -> c.bool ---
+    log_last_error :: proc() -> c.int ---
 }
 
 // Flecs functions
@@ -746,6 +837,9 @@ foreign flecs
     DocDetail: Entity
     DocLink: Entity
     DocColor: Entity
+
+    // Global OS API
+    @(link_name="ecs_os_api") Global_OS_API: OS_API
 }
 
 /// Module imports
