@@ -912,6 +912,25 @@ foreign flecs
         vars: ^Vars,
     ) -> c.int ---
     script_clear :: proc(world: ^World, script: Entity, instance: Entity) ---
+
+    // REST
+    rest_server_init :: proc(world: ^World, desc: ^HTTP_Server_Desc) -> ^HTTP_Server ---
+    rest_server_fini :: proc(srv: ^HTTP_Server) ---
+
+    // Rules
+    rule_init :: proc(world: ^World, desc: ^Filter_Desc) -> ^Rule ---
+    rule_fini :: proc(rule: ^Rule) ---
+    rule_get_filter :: proc(rule: ^Rule) -> ^Filter ---
+    rule_var_count :: proc(rule: ^Rule) -> i32 ---
+    rule_find_var :: proc(rule: ^Rule, name: cstring) -> i32 ---
+    rule_var_name :: proc(rule: ^Rule, var_id: i32) -> cstring ---
+    rule_var_is_entity :: proc(rule: ^Rule, var_id: i32) -> c.bool ---
+    rule_iter :: proc(world: ^World, rule: ^Rule) -> Iter ---
+    rule_next :: proc(it: ^Iter) -> c.bool ---
+    rule_next_instanced :: proc(it: ^Iter) -> c.bool ---
+    rule_str :: proc(rule: ^Rule) -> cstring ---
+    rule_str_w_profile :: proc(rule: ^Rule, it: ^Iter) -> cstring ---
+    rule_parse_vars :: proc(rule: ^Rule, it: ^Iter, expr: cstring) -> cstring ---
 }
 
 // Flecs functions
@@ -976,6 +995,22 @@ foreign flecs
     @(link_name="EcsPeriod1h") Ecs_Period_1h: Entity
     @(link_name="EcsPeriod1d") Ecs_Period_1d: Entity
     @(link_name="EcsPeriod1w") Ecs_Period_1w: Entity
+
+    rest_request_count: i64
+    rest_entity_count: i64
+    rest_entity_error_count: i64
+    rest_query_count: i64
+    rest_query_error_count: i64
+    rest_query_name_count: i64
+    rest_query_name_error_count: i64
+    rest_query_name_from_cache_count: i64
+    rest_enable_count: i64
+    rest_enable_error_count: i64
+    rest_delete_count: i64
+    rest_delete_error_count: i64
+    rest_world_stats_count: i64
+    rest_pipeline_stats_count: i64
+    rest_stats_error_count: i64
 }
 
 /// Module imports
@@ -988,4 +1023,5 @@ foreign flecs
     MonitorImport :: proc(world: ^World) ---
     PipelineImport :: proc(world: ^World) ---
     ScriptImport :: proc(world: ^World) ---
+    RestImport :: proc(world: ^World) ---
 }

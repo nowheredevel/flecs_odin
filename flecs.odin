@@ -229,7 +229,27 @@ Filter :: struct
     world: ^World,
 }
 
-// Rule is defined in rules.odin
+Rule :: struct
+{
+    hdr: Header,
+    filter: Filter,
+
+    vars: [^]Rule_Var,
+    var_count: i32,
+    var_pub_count: i32,
+    has_table_this: c.bool,
+    tvar_index: HashMap,
+    evar_index: HashMap,
+    vars_cache: Rule_Var_Cache,
+    var_names: [^]cstring,
+    src_vars: [^]Var_Id,
+
+    ops: [^]Rule_Op,
+    op_count: i32,
+
+    iterable: Iterable,
+    dtor: Poly_Dtor,
+}
 
 Observer :: struct
 {
