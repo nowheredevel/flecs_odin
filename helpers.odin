@@ -12,6 +12,7 @@ _Get_Type_Name :: proc($T: typeid) -> string
     ti := type_info_of(T)
     type_name: string
 
+    // TODO: Generate UUID for runtime.Type_Info_Procedure
     #partial switch info in ti.variant
     {
         case runtime.Type_Info_Named:

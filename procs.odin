@@ -836,6 +836,59 @@ foreign flecs
 
     // Metrics
     metric_init :: proc(world: ^World, desc: ^Metric_Desc) -> Entity ---
+
+    // Module
+    @(link_name="import") import_module :: proc(
+        world: ^World,
+        module: Module_Action,
+        module_name: cstring,
+    ) -> Entity ---
+    import_c :: proc(
+        world: ^World,
+        module: Module_Action,
+        module_name_c: cstring,
+    ) -> Entity ---
+    import_from_library :: proc(
+        world: ^World,
+        library_name: cstring,
+        module_name: cstring,
+    ) -> Entity ---
+    module_init :: proc(
+        world: ^World,
+        c_name: cstring,
+        desc: ^Component_Desc,
+    ) -> Entity ---
+
+    // OS API Impl
+    set_os_api_impl :: proc() ---
+
+    // Parser
+    parse_ws :: proc(ptr: cstring) -> cstring ---
+    parse_ws_eol :: proc(ptr: cstring) -> cstring ---
+    parse_identifier :: proc(
+        name: cstring,
+        expr: cstring,
+        ptr: cstring,
+        token_out: cstring,
+    ) -> cstring ---
+    parse_digit :: proc(
+        ptr: cstring,
+        token: cstring,
+    ) -> cstring ---
+    parse_token :: proc(
+        name: cstring,
+        expr: cstring,
+        ptr: cstring,
+        token_out: cstring,
+        delim: c.char,
+    ) -> cstring ---
+    parse_term :: proc(
+        world: ^World,
+        name: cstring,
+        expr: cstring,
+        ptr: cstring,
+        term_out: ^Term,
+    ) -> cstring ---
 }
 
 // Flecs functions
@@ -894,6 +947,12 @@ foreign flecs
 
     @(link_name="EcsConstant") Ecs_Constant: Entity
     @(link_name="EcsQuantity") Ecs_Quantity: Entity
+
+    @(link_name="EcsPeriod1s") Ecs_Period_1s: Entity
+    @(link_name="EcsPeriod1m") Ecs_Period_1m: Entity
+    @(link_name="EcsPeriod1h") Ecs_Period_1h: Entity
+    @(link_name="EcsPeriod1d") Ecs_Period_1d: Entity
+    @(link_name="EcsPeriod1w") Ecs_Period_1w: Entity
 }
 
 /// Module imports
@@ -903,4 +962,5 @@ foreign flecs
     DocImport :: proc(world: ^World) ---
     MetaImport :: proc(world: ^World) ---
     MetricsImport :: proc(world: ^World) ---
+    MonitorImport :: proc(world: ^World) ---
 }
