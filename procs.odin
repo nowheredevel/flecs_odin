@@ -785,6 +785,57 @@ foreign flecs
     log_enable_timestamp :: proc(enabled: c.bool) -> c.bool ---
     log_enable_timedelta :: proc(enabled: c.bool) -> c.bool ---
     log_last_error :: proc() -> c.int ---
+
+    // Meta
+    meta_from_desc :: proc(
+        world: ^World,
+        component: Entity,
+        kind: Type_Kind,
+        desc: cstring,
+    ) -> c.int ---
+    meta_cursor :: proc(world: ^World, type_: Entity, ptr: rawptr) -> Meta_Cursor ---
+    meta_get_ptr :: proc(cursor: ^Meta_Cursor) -> rawptr ---
+    meta_next :: proc(cursor: ^Meta_Cursor) -> c.int ---
+    meta_elem :: proc(cursor: ^Meta_Cursor, elem: i32) -> c.int ---
+    meta_member :: proc(cursor: ^Meta_Cursor, name: cstring) -> c.int ---
+    meta_dotmember :: proc(cursor: ^Meta_Cursor, name: cstring) -> c.int ---
+    meta_push :: proc(cursor: ^Meta_Cursor) -> c.int ---
+    meta_pop :: proc(cursor: ^Meta_Cursor) -> c.int ---
+    meta_is_collection :: proc(cursor: ^Meta_Cursor) -> c.bool ---
+    meta_get_type :: proc(cursor: ^Meta_Cursor) -> Entity ---
+    meta_get_unit :: proc(cursor: ^Meta_Cursor) -> Entity ---
+    meta_get_member :: proc(cursor: ^Meta_Cursor) -> cstring ---
+    meta_set_bool :: proc(cursor: ^Meta_Cursor, value: c.bool) -> c.int ---
+    meta_set_char :: proc(cursor: ^Meta_Cursor, value: c.char) -> c.int ---
+    meta_set_int :: proc(cursor: ^Meta_Cursor, value: i64) -> c.int ---
+    meta_set_uint :: proc(cursor: ^Meta_Cursor, value: u64) -> c.int ---
+    meta_set_float :: proc(cursor: ^Meta_Cursor, value: f64) -> c.int ---
+    meta_set_string :: proc(cursor: ^Meta_Cursor, value: cstring) -> c.int ---
+    meta_set_string_literal :: proc(cursor: ^Meta_Cursor, value: cstring) -> c.int ---
+    meta_set_entity :: proc(cursor: ^Meta_Cursor, value: Entity) -> c.int ---
+    meta_set_null :: proc(cursor: ^Meta_Cursor) -> c.int ---
+    meta_set_value :: proc(cursor: ^Meta_Cursor, value: ^Value) -> c.int ---
+    meta_get_bool :: proc(cursor: ^Meta_Cursor) -> c.bool ---
+    meta_get_char :: proc(cursor: ^Meta_Cursor) -> c.char ---
+    meta_get_int :: proc(cursor: ^Meta_Cursor) -> i64 ---
+    meta_get_uint :: proc(cursor: ^Meta_Cursor) -> u64 ---
+    meta_get_float :: proc(cursor: ^Meta_Cursor) -> f64 ---
+    meta_get_string :: proc(cursor: ^Meta_Cursor) -> cstring ---
+    meta_get_entity :: proc(cursor: ^Meta_Cursor) -> Entity ---
+    meta_ptr_to_float :: proc(type_kind: Primitive_Kind, ptr: rawptr) -> f64 ---
+    primitive_init :: proc(world: ^World, desc: ^Primitive_Desc) -> Entity ---
+    enum_init :: proc(world: ^World, desc: ^Enum_Desc) -> Entity ---
+    bitmask_init :: proc(world: ^World, desc: ^Bitmask_Desc) -> Entity ---
+    array_init :: proc(world: ^World, desc: ^Array_Desc) -> Entity ---
+    vector_init :: proc(world: ^World, desc: ^Vector_Desc) -> Entity ---
+    struct_init :: proc(world: ^World, desc: ^Struct_Desc) -> Entity ---
+    opaque_init :: proc(world: ^World, desc: ^Opaque_Desc) -> Entity ---
+    unit_init :: proc(world: ^World, desc: ^Unit_Desc) -> Entity ---
+    unit_prefix_init :: proc(world: ^World, desc: ^Unit_Prefix_Desc) -> Entity ---
+    quantity_init :: proc(world: ^World, desc: ^Entity_Desc) -> Entity ---
+
+    // Metrics
+    metric_init :: proc(world: ^World, desc: ^Metric_Desc) -> Entity ---
 }
 
 // Flecs functions
@@ -825,21 +876,24 @@ foreign flecs
     ECS_AND: c.ulonglong
 
     // Builtin component ids
-    EcsQuery: Entity
-    EcsObserver: Entity
+    @(link_name="EcsQuery") Ecs_Query: Entity
+    @(link_name="EcsObserver") Ecs_Observer: Entity
 
-    EcsSystem: Entity
-    EcsFlag: Entity
-    EcsFlecsInternals: Entity
+    @(link_name="EcsSystem") Ecs_System: Entity
+    @(link_name="EcsFlag") Ecs_Flag: Entity
+    @(link_name="EcsFlecsInternals") Ecs_Flecs_Internals: Entity
 
     // Doc entities
-    DocBrief: Entity
-    DocDetail: Entity
-    DocLink: Entity
-    DocColor: Entity
+    @(link_name="DocBrief") Doc_Brief: Entity
+    @(link_name="DocDetail") Doc_Detail: Entity
+    @(link_name="DocLink") Doc_Link: Entity
+    @(link_name="DocColor") Doc_Color: Entity
 
     // Global OS API
     @(link_name="ecs_os_api") Global_OS_API: OS_API
+
+    @(link_name="EcsConstant") Ecs_Constant: Entity
+    @(link_name="EcsQuantity") Ecs_Quantity: Entity
 }
 
 /// Module imports
@@ -847,4 +901,6 @@ foreign flecs
 foreign flecs
 {
     DocImport :: proc(world: ^World) ---
+    MetaImport :: proc(world: ^World) ---
+    MetricsImport :: proc(world: ^World) ---
 }
