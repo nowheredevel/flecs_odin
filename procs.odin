@@ -889,6 +889,29 @@ foreign flecs
         ptr: cstring,
         term_out: ^Term,
     ) -> cstring ---
+
+    // Pipeline
+    pipeline_init :: proc(world: ^World, desc: ^Pipeline_Desc) -> Entity ---
+    set_pipeline :: proc(world: ^World, pipeline: Entity) ---
+    get_pipeline :: proc(world: ^World) -> Entity ---
+    progress :: proc(world: ^World, delta_time: FTime) -> c.bool ---
+    set_time_scale :: proc(world: ^World, scale: FTime) ---
+    reset_clock :: proc(world: ^World) ---
+    run_pipeline :: proc(world: ^World, pipeline: Entity, delta_time: FTime) ---
+    set_threads :: proc(world: ^World, threads: i32) ---
+    
+    // Plecs
+    plecs_from_str :: proc(world: ^World, name: cstring, str: cstring) -> c.int ---
+    plecs_from_file :: proc(world: ^World, filename: cstring) -> c.int ---
+    script_init :: proc(world: ^World, desc: ^Script_Desc) -> Entity ---
+    script_update :: proc(
+        world: ^World,
+        script: Entity,
+        instance: Entity,
+        str: cstring,
+        vars: ^Vars,
+    ) -> c.int ---
+    script_clear :: proc(world: ^World, script: Entity, instance: Entity) ---
 }
 
 // Flecs functions
@@ -963,4 +986,6 @@ foreign flecs
     MetaImport :: proc(world: ^World) ---
     MetricsImport :: proc(world: ^World) ---
     MonitorImport :: proc(world: ^World) ---
+    PipelineImport :: proc(world: ^World) ---
+    ScriptImport :: proc(world: ^World) ---
 }
